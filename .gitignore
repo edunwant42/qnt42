@@ -1,0 +1,33 @@
+# Logs
+logs
+*.log
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.sw?
+
+#  Ignore History folder
+.history/
+
+# Ignore Temporary files
+.temp/
+*.tmp
+*.temp
+
+# Ignore log files
+*.log
+
+# Ignore preview images for the current moment
+.preview/
+
+# Ignore .env file if ever needed
+.env
+
+# Ignore node_modules
+node_modules/
+
+# Ignore build output
+dist/
