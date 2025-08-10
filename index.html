@@ -1,14 +1,158 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="src/assets/images/logo/favicon-blue.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QNT42 - HOME</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QNT42 - Quick Notes Taking</title>
+    <link rel="stylesheet" href="src/assets/css/home.css">
+    <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css" />
 </head>
 
 <body>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <img src="src/assets/images/logo/note-logo-blue.webp" alt="QNT42 Logo">
+                QNT
+                <span>42</span>
+            </div>
+            <nav>
+                <a href="#" data-target="hero" class="nav-link active">Home</a>
+                <a href="#" data-target="about" class="nav-link">About</a>
+                <a href="#" data-target="features" class="nav-link">Features</a>
+                <a href="#" data-target="contact" class="nav-link">Contact</a>
+                <div class="nav-indicator"></div>
+            </nav>
+            <div class="auth-buttons">
+                <a href="src/login.html" class="btn secondary">Login</a>
+                <a href="src/register.html" class="btn primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1>The <span class="highlight">Future</span> of Notes.</h1>
+                <p>Write and organize your notes <span class="highlight">securely</span> and <span
+                        class="highlight">effortlessly</span>.</p>
+            </div>
+            <div class="hero-image">
+                <img src="src/assets/images/Hero 1.webp" alt="Hero Illustration">
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <img src="src/assets/images/Wave.svg" alt="Wave Decoration" class="wave-decoration">
+        <div class="container about-content">
+            <div class="about-image">
+                <img src="src/assets/images/Hero 2.webp" alt="About Illustration">
+            </div>
+            <div class="about-text">
+                <h2>About <span class="highlight">QNT42</span></h2>
+                <p>QNT42 (Quick Notes Taking) is a lightweight, secure, and efficient note-taking web application
+                    designed for fast and easy note management.</p>
+                <p>With a clean and intuitive interface, it lets you write, store, and manage notes securely with
+                    complete privacy, your data is encrypted and accessible only to you.</p>
+                <a href="/src/dashboard.html">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2>Key <span class="highlight">Features</span></h2>
+        <div class="features-container">
+            <div class="item">
+                <i class="icon-user"></i>
+                <h3>Secure Authentication</h3>
+                <p>Register and login safely with email authentication. Your account, your control.</p>
+            </div>
+            <div class="item">
+                <i class="icon-shield-check"></i>
+                <h3>Client-Side Encryption</h3>
+                <p>Encryption is applied directly in your side before any data is stored, ensuring complete privacy.</p>
+            </div>
+            <div class="item">
+                <i class="icon-notepad-text"></i>
+                <h3>Advanced Note Management</h3>
+                <p>Create, edit, and organize effortlessly your notes with titles, content, and keyword tags.</p>
+            </div>
+            <div class="item">
+                <div class="icons-switcher">
+                    <i class="icon-palette"></i>
+                    <i class="icon-sun-moon"></i>
+                </div>
+                <h3>Customizable Theming</h3>
+                <p>Multiple color themes to personalize your experience.</p>
+                <p>Toggle between light and dark themes for comfortable viewing day or night.</p>
+            </div>
+            <div class="item">
+                <i class="icon-monitor-smartphone"></i>
+                <h3>Responsive Design</h3>
+                <p>QNT42 is fully fluid, and adaptive design engineered for seamless performance across desktop, tablet,
+                    and mobile platforms.</p>
+            </div>
+            <div class="item">
+                <i class="icon-download"></i>
+                <h3>Data portability</h3>
+                <p>Comprehensive backup system with timestamped JSON exports and streamlined import capabilities.</p>
+            </div>
+            <div class="item">
+                <i class="icon-refresh-cw"></i>
+                <h3>Cloud Data Storage & Sync</h3>
+                <p>Store data in a secure cloud database, allowing safe syncing across all your devices.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <img src="src/assets/images/Wave.svg" alt="Wave Decoration" class="wave-decoration">
+        <h2>Contact <span class="highlight">Us</span></h2>
+        <div class="container contact-content">
+            <div class="contact-text">
+                <p>Need help with <span class="highlight">QNT42</span> ? Found a bug or have a feature suggestion? <br>
+                    Or maybe you just want to say hi? We're here to help! Send us a message and we'll get back to you as soon as possible.</p>
+                <form>
+                    <div class="input-row">
+                        <div class="input-wrapper">
+                            <i class="icon-mail"></i>
+                            <input type="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <i class="icon-user"></i>
+                            <input type="text" placeholder="Full Name" required>
+                        </div>
+                    </div>
+                    <textarea placeholder="Your message" required></textarea>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+            <div class="contact-image">
+                <img src="src/assets/images/Hero 3.webp" alt="Contact Illustration">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 <span class="highlight">QNT42</span>. All rights reserved. Designed & developed by <a
+                    class="author" href="https://edunwant42.tech">ababdelo</a>.</p>
+        </div>
+    </footer>
+
+    <script src="src/assets/js/home.js"></script>
+
+</body>
+</html>
 
 </body>
 
