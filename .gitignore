@@ -23,6 +23,9 @@ logs
 # Ignore preview images for the current moment
 .preview/
 
+# Ignore design files for the current moment
+.design/
+
 # Ignore .env file if ever needed
 .env
 
