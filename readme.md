@@ -148,6 +148,6 @@ This project is licensed under a **Personal Use License**, see the [LICENSE](lic
 ---
 
 <div align="center">
-  <p><strong>Built by [Abderrahmane Abddelouafi](https://edunwant42.tech) for the Front-End Development Capstone Project</strong></p>
+  <p><strong>Built by <a href="https://edunwant42.tech">Abderrahmane Abddelouafi</a> for the Front-End Development Capstone Project</strong></p>
   <p><em>2025 - QNT42: Quick Notes Taking</em></p>
 </div>
