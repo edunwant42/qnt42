@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+      <div class="auth-container">
+        <!-- Left Section - Welcome -->
+        <div class="welcome-section">
+            <!-- Background Vector -->
+            <div class="background-vector">
+                <img src="assets/images/Vector.svg" alt="Background Shape">
+            </div>
+            
+            <div class="welcome-content">
+                <h1>New here?</h1>
+                <p>Join our community and unlock the full potential of our platform.
+                Sign up now to enjoy exclusive features and stay updated!</p>
+                <a href="register.html" class="btn btn-outline">SIGN UP</a>
+                
+                <div class="welcome-image">
+                    <img src="assets/images/sign up.webp" alt="Welcome Illustration">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Section - Login Form -->
+        <div class="form-section">
+            <div class="form-container">
+                <h2>LOGIN</h2>
+                
+                <form class="form" autocomplete="off">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Username" name="username" autocomplete="off" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" autocomplete="new-password" name="password" data-form-type="password" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye-slash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-links">
+                        <span>Forgot your <a href="#" class="link-primary">Password</a> ?</span>
+                        <span>Return <a href="../index.html" class="link-primary">Home</a> ?</span>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">SIGN IN</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+  <script src="assets/js/auth-ui.js"></script>
+</body>
+</html>

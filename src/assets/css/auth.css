@@ -1,0 +1,354 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===============================
+   Font Import (Local Gugi Font)
+   =============================== */
+@font-face {
+    font-family: "Gugi";
+    src: url("../fonts/Gugi/Gugi-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ===============================
+   Root Variables
+   =============================== */
+:root {
+    --primary: #209af7;
+    --secondary: #67b9f7;
+    --primary-light: rgba(32, 154, 247, 0.1);
+    --white: #ffffff;
+    --dark: #222;
+    --text-light: #666;
+    --background-blue: #b3d9ff;
+    --background-light: #f8fafc;
+    --transition: 0.3s ease;
+}
+
+/* ===============================
+   Global Styles
+   =============================== */
+body {
+    font-family: "Gugi", sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ===============================
+   Auth Container (Login & Register)
+   =============================== */
+.auth-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* ===============================
+   Welcome Section (Left for Login, Right for Register)
+   =============================== */
+.welcome-section {
+    flex: 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.background-vector {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.background-vector img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+}
+
+/* For register page - reverse the vector */
+.register-page .background-vector img {
+    object-position: right center;
+    transform: scaleX(-1);
+}
+
+.welcome-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    max-width: 720px;
+    color: var(--dark);
+}
+
+.welcome-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+    font-weight: normal;
+}
+
+.welcome-content p {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--dark);
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+}
+
+.btn-outline:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.welcome-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-image img {
+    width: 100%;
+    height: auto;
+    max-width: 550px;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+}
+
+/* Register page specific - larger image */
+.register-page .welcome-image img {
+    max-width: 720px;
+}
+
+/* ===============================
+   Form Section (Right for Login, Left for Register)
+   =============================== */
+.form-section {
+    flex: 1;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.form-section h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 3.5rem;
+    font-weight: normal;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-container h2 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 3.5rem;
+    font-weight: normal;
+}
+
+.form-container .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ===============================
+   Form Styles
+   =============================== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    width: 350px;
+    align-items: center;
+    background: #f2f2f2;
+    padding: 0.8rem 1rem;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border: 2px solid transparent;
+    transition: var(--transition);
+}
+
+.input-group:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.input-group i {
+    margin-right: 0.8rem;
+    color: var(--text-light);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.input-group input {
+    margin-left: 10px;
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
+    font-size: 1rem;
+    color: var(--dark);
+}
+
+.input-group input::placeholder {
+    color: var(--text-light);
+}
+
+/* Override browser autofill styling */
+.input-group input:-webkit-autofill,
+.input-group input:-webkit-autofill:hover,
+.input-group input:-webkit-autofill:focus,
+.input-group input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #f2f2f2 inset !important;
+    -webkit-text-fill-color: var(--dark) !important;
+    background-color: transparent !important;
+}
+
+/* For Firefox */
+.input-group input:-moz-autofill {
+    background-color: transparent !important;
+    box-shadow: 0 0 0 30px #f2f2f2 inset !important;
+    color: var(--dark) !important;
+}
+
+/* For other browsers */
+.input-group input:autofill {
+    background-color: transparent !important;
+    box-shadow: 0 0 0 30px #f2f2f2 inset !important;
+    color: var(--dark) !important;
+}
+
+.toggle-password {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.5rem;
+    transition: var(--transition);
+}
+
+.toggle-password:hover {
+    color: var(--primary);
+}
+
+.toggle-password i {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.form-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+    width: 350px;
+    gap: 1rem;
+}
+
+.form-links a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.form-links a:hover {
+    color: var(--primary);
+}
+
+.form-links .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-links input[type="checkbox"] {
+    accent-color: var(--primary);
+}
+
+/* Generate Password Link Styling */
+.form-links .generate-password {
+    color: var(--text-light);
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.form-links .generate-password:hover {
+    color: var(--primary);
+}
+
+.form-links .generate-password i {
+    margin-right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    background: #1a7fd4;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(32, 154, 247, 0.3);
+}
