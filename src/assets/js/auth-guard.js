@@ -4,105 +4,83 @@ import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.1.0/fi
 
 // Page types for authentication control
 const PAGE_TYPES = {
-  PUBLIC: 'public',      // Anyone can access (home page)
-  AUTH_ONLY: 'auth-only', // Only authenticated users (dashboard)
-  GUEST_ONLY: 'guest-only' // Only unauthenticated users (login, register)
+  PUBLIC: 'public',
+  AUTH_ONLY: 'auth-only',
+  GUEST_ONLY: 'guest-only'
 };
 
-// Current page detection
+/**
+ * Determines the current page's authentication requirements.
+ * @returns {string} The page type constant.
+ */
 function getCurrentPageType() {
   const path = window.location.pathname;
-  
+
   if (path.includes('dashboard')) {
     return PAGE_TYPES.AUTH_ONLY;
   } else if (path.includes('login') || path.includes('register') || path.includes('index') || path === '/') {
     return PAGE_TYPES.GUEST_ONLY;
-  } else {
-    return PAGE_TYPES.PUBLIC;
   }
+  return PAGE_TYPES.PUBLIC;
 }
 
-// Redirect functions
-function redirectToLogin() {
-  if (!window.location.pathname.includes('login')) {
-    window.location.href = '/src/login.html';
-  }
+/**
+ * Redirects the user to a specified URL.
+ * @param {string} page - The path to redirect to.
+ */
+function redirectTo(page) {
+  window.location.href = page;
 }
 
-function redirectToDashboard() {
-  if (!window.location.pathname.includes('dashboard')) {
-    window.location.href = '/src/dashboard.html';
-  }
-}
-
-function redirectToHome() {
-  if (!window.location.pathname.includes('index') && !window.location.pathname === '/') {
-    window.location.href = '/index.html';
-  }
-}
-
-// Main authentication guard function
+/**
+ * The main authentication guard. Hides the body, checks auth state,
+ * and shows content or redirects the user.
+ */
 function initAuthGuard() {
   const pageType = getCurrentPageType();
-  
-  // Show loading state while checking auth
-  document.body.style.visibility = 'hidden';
-  
+
+  // Add a class to the body to hide it via CSS
+  document.body.classList.add('loading');
+
+  // Listen for changes in the Firebase authentication state
   onAuthStateChanged(auth, (user) => {
-    // Check if registration is in progress
+    // Prevent guard from running during registration process
     if (window.isRegistering) {
-      console.log('Registration in progress, skipping auth guard');
-      document.body.style.visibility = 'visible';
+      console.log('Registration in progress, skipping auth guard.');
+      document.body.classList.remove('loading');
       return;
     }
-    
-    if (user) {
-      // User is authenticated
-      console.log('User is authenticated:', user.displayName || user.email);
-      
-      if (pageType === PAGE_TYPES.GUEST_ONLY) {
-        // Authenticated user trying to access login/register/home
-        console.log('Redirecting authenticated user to dashboard');
-        redirectToDashboard();
-        return;
-      }
-      
-      // Allow access to dashboard only - NO navbar modifications
-      
-    } else {
-      // User is not authenticated
-      console.log('User is not authenticated');
-      
-      if (pageType === PAGE_TYPES.AUTH_ONLY) {
-        // Unauthenticated user trying to access protected page
-        console.log('Redirecting unauthenticated user to login');
-        redirectToLogin();
-        return;
-      }
-      
-      // Allow access to guest pages - NO navbar modifications
+
+    switch (pageType) {
+      case PAGE_TYPES.AUTH_ONLY:
+        // Redirect to login if a protected page is accessed by a guest
+        if (!user) {
+          console.log('Redirecting unauthenticated user to login.');
+          redirectTo('/src/login.html');
+          return;
+        }
+        break;
+      case PAGE_TYPES.GUEST_ONLY:
+        // Redirect to dashboard if a guest page is accessed by an authenticated user
+        if (user) {
+          console.log('Redirecting authenticated user to dashboard.');
+          redirectTo('/src/dashboard.html');
+          return;
+        }
+        break;
+      case PAGE_TYPES.PUBLIC:
+        // No action needed for public pages
+        console.log('Public page, no redirection needed.');
+        break;
     }
-    
-    // Show the page content
-    document.body.style.visibility = 'visible';
+
+    // Show the page content now that all checks are complete
+    document.body.classList.remove('loading');
+    console.log('Authentication guard completed.');
   });
 }
 
-// Update navbar based on authentication status
-function updateNavbarForAuthenticatedUser(user) {
-  const authButtons = document.querySelector('.auth-buttons');
-  if (authButtons) {
-    authButtons.innerHTML = `
-      <div class="user-info">
-        <span>Welcome, ${user.displayName || 'User'}</span>
-        <a href="/src/dashboard.html" class="btn secondary">Dashboard</a>
-        <button onclick="handleLogout()" class="btn primary">Logout</button>
-      </div>
-    `;
-  }
-}
-
-// Initialize on page load
+// Initialize the guard when the page's DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initAuthGuard);
 
 export { initAuthGuard, PAGE_TYPES };
