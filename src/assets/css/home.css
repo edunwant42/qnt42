@@ -39,6 +39,11 @@ body {
     background-color: var(--white);
 }
 
+body.loading {
+    visibility: hidden;
+    opacity: 0;
+}
+
 h1,
 h2 {
     color: var(--text-light);
@@ -494,7 +499,6 @@ nav a.active {
     font-size: 1.2rem;
 }
 
-
 .contact-image {
     flex: 1;
     max-width: 50%;
@@ -598,11 +602,9 @@ nav a.active {
     color: var(--primary);
 }
 
-
 /* ===============================
    Responsive Design
    =============================== */
-
 
 /* Tablet Screens */
 
@@ -611,13 +613,13 @@ nav a.active {
         padding: 0 1rem;
     }
 
-/* Navbar tablet styling */
+    /* Navbar tablet styling */
     /* hide nav register and login buttons */
     .auth-buttons {
         display: none;
     }
 
-    .nav-link{
+    .nav-link {
         padding: 0;
         /* adjust font size and weight */
         font-weight: 500;
