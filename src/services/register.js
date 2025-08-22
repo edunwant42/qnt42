@@ -1,9 +1,15 @@
 
 // Import Firebase configuration, auth instance, and functions from config.js
-import { auth, db, createUserWithEmailAndPassword, updateProfile, doc, setDoc } from '../assets/js/config.js';
+import { auth, db, createUserWithEmailAndPassword, updateProfile, signOut, doc, setDoc } from '../assets/js/config.js';
 
 // Get the register button element
 const registerButton = document.getElementById("register-btn");
+
+// Disable auth guard temporarily during registration
+let isRegistering = false;
+
+// Override the auth guard temporarily
+window.isRegistering = false;
 
 // add event listener for the button if clicked
 registerButton.addEventListener("click", (event) => {
@@ -25,6 +31,9 @@ registerButton.addEventListener("click", (event) => {
     return;
   }
 
+  // Set registration flag to prevent auth guard interference
+  window.isRegistering = true;
+
   // Create user with email and password
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
@@ -44,11 +53,20 @@ registerButton.addEventListener("click", (event) => {
       });
     })
     .then(() => {
-      // Everything completed successfully
-      alert(`User registered successfully! Welcome ${username}`);
+      // Everything completed successfully - now sign out the user
+      return signOut(auth);
+    })
+    .then(() => {
+      // User signed out, reset registration flag
+      window.isRegistering = false;
+      // Now redirect to login
+      alert(`User registered successfully! Please log in with your credentials.`);
       window.location.href = '/src/login.html'; // Redirect to login page
     })
     .catch((error) => {
+      // Reset registration flag on error
+      window.isRegistering = false;
+      
       const errorCode = error.code;
       const errorMessage = error.message;
       console.error("Registration error:", errorCode, errorMessage);
