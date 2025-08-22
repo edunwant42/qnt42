@@ -7,6 +7,26 @@
     <title>QNT42 - Dashboard</title>
 </head>
 <body>
+    <!-- Simple dashboard - auth guard will handle access control -->
+    <h1>Dashboard</h1>
+    <p>Welcome to your dashboard, <span id="user-username"></span>!</p>
+    <button onclick="handleLogout()">Logout</button>
     
+    <script type="module">
+        import { auth } from './assets/js/config.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+        import './assets/js/auth-guard.js';
+        import './services/logout.js';
+
+        // Wait for auth state to load and display username
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const username = user.displayName || user.email || 'User';
+                document.getElementById('user-username').textContent = username;
+            } else {
+                // User not authenticated, auth-guard will handle redirect, nothing needs to be done here
+            }
+        });
+    </script>
 </body>
 </html>
