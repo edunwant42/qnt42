@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/auth.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="services/register.js" defer></script>
 </head>
 <body class="register-page">
     <div class="auth-container">
@@ -19,17 +20,17 @@
                 <form class="form" autocomplete="off">
                     <div class="input-group">
                         <i class="fas fa-user"></i>
-                        <input type="text" placeholder="Username" name="username" autocomplete="off" required>
+                        <input type="text" placeholder="Username" id="username" name="username" autocomplete="off">
                     </div>
                     
                     <div class="input-group">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" placeholder="Email" name="email" autocomplete="off" required>
+                        <input type="email" placeholder="Email" name="email" id="email" autocomplete="off">
                     </div>
                     
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" autocomplete="new-password" name="password" required>
+                        <input type="password" placeholder="Password" autocomplete="new-password" name="password" id="password">
                         <button type="button" class="toggle-password">
                             <i class="fas fa-eye-slash"></i>
                         </button>
@@ -40,7 +41,7 @@
                         <span>Return <a href="../index.html" class="link-primary">Home</a> ?</span>
                     </div>
                     
-                    <button type="submit" class="btn-primary">SIGN UP</button>
+                    <button type="submit" class="btn-primary" id="register-btn">SIGN UP</button>
                 </form>
             </div>
         </div>
