@@ -25,8 +25,8 @@
     href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Gugi&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
     rel="stylesheet" />
   <title>QNTT42 - Dashboard</title>
-  <link rel="stylesheet" href="assets/css/dashboard.css">
-  <script src="assets/js/notes.js" defer></script>
+  <link rel="stylesheet" href="/src/assets/css/dashboard.css" />
+  <script src="/src/assets/js/notes.js" defer></script>
 </head>
 
 <body>
@@ -98,7 +98,7 @@
     <aside class="sidebar">
       <h2 class="header-title">
         <div class="title-main-row">
-          <img id="appLogo" src="assets/images/logo/note-logo-blue.webp" alt="Quick Notes Logo" class="logo" />
+          <img id="appLogo" src="/src/assets/images/logo/note-logo-blue.webp" alt="Quick Notes Logo" class="logo" />
           <span class="main-title">QNT42</span>
         </div>
         <div class="header-subtitle">Your quick note-taking app</div>
@@ -198,10 +198,10 @@
 
   <!-- JavaScript Modules -->
   <script type="module">
-    import { auth } from './assets/js/config.js';
+    import { auth } from '/src/assets/js/config.js';
     import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
-    import './assets/js/auth-guard.js';
-    import './services/logout.js';
+    import '/src/assets/js/auth-guard.js';
+    import '/src/services/logout.js';
   </script>
 </body>
 

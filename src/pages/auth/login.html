@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QNT42 - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="assets/images/logo/favicon-blue.ico" />
-    <link rel="stylesheet" href="assets/css/auth.css" />
+    <link rel="icon" type="image/x-icon" href="/src/assets/images/logo/favicon-blue.ico" />
+    <link rel="stylesheet" href="/src/assets/css/auth.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script type="module" src="services/login.js" defer></script>
 </head>
 
 <body>
@@ -18,17 +17,17 @@
         <div class="welcome-section">
             <!-- Background Vector -->
             <div class="background-vector">
-                <img src="assets/images/Vector.svg" alt="Background Shape">
+                <img src="/src/assets/images/Vector.svg" alt="Background Shape">
             </div>
 
             <div class="welcome-content">
                 <h1>New here?</h1>
                 <p>Join our community and unlock the full potential of our platform.
                     Sign up now to enjoy exclusive features and stay updated!</p>
-                <a href="register.html" class="btn btn-outline">SIGN UP</a>
+                <a href="/auth/register" class="btn btn-outline">SIGN UP</a>
 
                 <div class="welcome-image">
-                    <img src="assets/images/sign up.webp" alt="Welcome Illustration">
+                    <img src="/src/assets/images/sign up.webp" alt="Welcome Illustration">
                 </div>
             </div>
         </div>
@@ -55,7 +54,7 @@
 
                     <div class="form-links">
                         <span>Forgot your <a href="#" class="link-primary">Password</a> ?</span>
-                        <span>Return <a href="../index.html" class="link-primary">Home</a> ?</span>
+                        <span>Return <a href="/" class="link-primary">Home</a> ?</span>
                     </div>
 
                     <button type="submit" class="btn btn-primary">SIGN IN</button>
@@ -64,8 +63,10 @@
         </div>
     </div>
 
-    <script src="assets/js/auth-ui.js"></script>
-    <script type="module" src="assets/js/auth-guard.js"></script>
+    <!-- Load scripts in the correct order -->
+    <script src="/src/assets/js/auth-ui.js"></script>
+    <script type="module" src="/src/assets/js/auth-guard.js"></script>
+    <script type="module" src="/src/services/login.js"></script>
 </body>
 
 </html>
