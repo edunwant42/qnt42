@@ -650,3 +650,136 @@ function setFilter(filterType) {
     renderNotes();
 }
 
+/**************************************/
+/*  UI STATE AND RESPONSIVE FUNCTIONS */
+/**************************************/
+
+/**
+ * Closes the expanded header overlay (mobile view)
+ */
+/**
+ * Closes the expanded header overlay (mobile view)
+ */
+function closeExpandedHeader() {
+    const headerBar = document.getElementById("headerBar");
+    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+    const headerExpandedContent = document.getElementById("headerExpandedContent");
+    const overlay = document.getElementById("headerOverlay");
+
+    if (headerBar) {
+        headerBar.classList.remove("is-expanded");
+    }
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.querySelector("i").className = "ri-menu-line";
+    }
+    if (headerExpandedContent) {
+        headerExpandedContent.style.display = 'none';
+    }
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+/**
+ * Handles window resize events and adjusts layout accordingly
+ */
+function handleResize() {
+    const sidebar = document.querySelector(".sidebar");
+    const mainWrapper = document.getElementById("mainWrapper");
+    const headerBar = document.getElementById("headerBar");
+    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+    const headerExpandedContent = document.getElementById("headerExpandedContent");
+    const overlay = document.getElementById("headerOverlay");
+
+    // Mobile layout (width <= 550px)
+    if (window.innerWidth <= 550) {
+        sidebar.classList.add("collapsed");
+        sidebar.style.display = "none";
+        mainWrapper.classList.add("sidebar-collapsed");
+        headerBar.classList.remove("sidebar-collapsed");
+
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.querySelector("i").className = "ri-menu-line";
+        }
+        if (headerExpandedContent) {
+            headerExpandedContent.style.display = 'none';
+        }
+        if (overlay) {
+            overlay.remove();
+        }
+    } else {
+        // Desktop layout
+        sidebar.classList.remove("collapsed");
+        sidebar.style.display = "";
+        mainWrapper.classList.remove("sidebar-collapsed");
+        headerBar.classList.remove("sidebar-collapsed");
+        headerBar.classList.remove("is-expanded");
+
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.querySelector("i").className = "ri-menu-line";
+        }
+        if (headerExpandedContent) {
+            headerExpandedContent.style.display = 'none';
+        }
+        if (overlay) {
+            overlay.remove();
+        }
+    }
+}
+
+/**
+ * Toggles sidebar visibility (desktop) or header expansion (mobile)
+ */
+function toggleSidebar() {
+    const sidebar = document.querySelector(".sidebar");
+    const mainWrapper = document.getElementById("mainWrapper");
+    const headerBar = document.getElementById("headerBar");
+    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+    const headerExpandedContent = document.getElementById("headerExpandedContent");
+
+    // Mobile behavior
+    if (window.innerWidth <= 550) {
+        headerBar.classList.toggle("is-expanded");
+        const isExpanded = headerBar.classList.contains("is-expanded");
+
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.querySelector("i").className = isExpanded ? "ri-close-line" : "ri-menu-line";
+        }
+        if (headerExpandedContent) {
+            headerExpandedContent.style.display = isExpanded ? 'flex' : 'none';
+        }
+
+        if (isExpanded) {
+            // Create overlay for mobile expanded state
+            const overlay = document.createElement("div");
+            overlay.id = "headerOverlay";
+            overlay.className = "overlay-blur";
+            document.body.appendChild(overlay);
+            overlay.addEventListener("click", closeExpandedHeader);
+        } else {
+            // Remove overlay
+            const overlay = document.getElementById("headerOverlay");
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+    } else {
+        // Desktop behavior - toggle sidebar collapse
+        sidebar.classList.toggle("collapsed");
+        mainWrapper.classList.toggle("sidebar-collapsed");
+        headerBar.classList.toggle("sidebar-collapsed");
+        headerBar.classList.remove("is-expanded");
+
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.querySelector("i").className = "ri-menu-line";
+        }
+
+        const overlay = document.getElementById("headerOverlay");
+        if (overlay) {
+            overlay.remove();
+        }
+        if (headerExpandedContent) {
+            headerExpandedContent.style.display = 'none';
+        }
+    }
+}
