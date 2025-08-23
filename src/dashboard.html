@@ -2,217 +2,207 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="Quick Notes 42: Your personal, fast, and customizable note-taking web application with dynamic themes and statistics." />
+  <meta name="keywords"
+    content="notes, note-taking, web app, productivity, quick notes, personal organizer, themes, statistics, QN42, edunwant42" />
+  <meta name="author" content="edunwant42" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Quick Notes 42 - Your Personal Note-Taking Web App" />
+  <meta property="og:description"
+    content="Organize your thoughts with Quick Notes 42 – a customizable web app with dynamic themes, note statistics, and powerful management tools." />
+  <meta property="og:image" content="https://ababdelo.github.io/QN42/assets/images/logo/note-logo-blue.webp" />
+  <meta property="og:url" content="https://ababdelo.github.io/QN42/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
   <link rel="icon" type="image/x-icon" href="assets/images/logo/favicon-blue.ico" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Gugi&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+    rel="stylesheet" />
+  <title>QNTT42 - Dashboard</title>
   <link rel="stylesheet" href="assets/css/dashboard.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <title>QNT42 - Dashboard</title>
-
-  <!-- Critical CSS for loading state -->
-  <style>
-    body.loading {
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    .header-center {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .welcome-text {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--text-color);
-      text-align: center;
-    }
-
-    .logout-btn {
-      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .logout-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-    }
-
-    .header-controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-color);
-      margin: 0;
-    }
-
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-      
-      .header-center {
-        order: -1;
-      }
-      
-      .header-controls {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-  </style>
-
-  <!-- Initialize auth guard before any content loads -->
-  <script type="module">
-    import './assets/js/auth-guard.js';
-  </script>
+  <script src="assets/js/notes.js" defer></script>
 </head>
 
 <body>
-  <!-- Main Header -->
-  <header>
-    <div class="logo-section">
-      <h1>
-        <img src="assets/images/logo/note-logo-blue.webp" alt="QNT42 Logo">
-        QNT42
-      </h1>
-    </div>
-    
-    <div class="header-center">
-      <div class="welcome-text">
-        Welcome back, <span id="user-username">Loading...</span>! 👋
+  <header id="headerBar" class="header-bar">
+    <div class="header-top-row">
+      <button id="sidebarToggleBtn" class="sidebar-toggle-btn" title="Toggle Sidebar">
+        <i class="ri-menu-line"></i>
+      </button>
+      <div class="search-wrapper">
+        <input type="search" id="searchInput" placeholder="Search notes..." aria-label="Search notes"
+          class="search-input" />
+        <i class="ri-search-2-line search-icon"></i>
       </div>
+      <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Dark/Light Mode">
+        <i class="ri-moon-line"></i>
+      </button>
     </div>
-    
-    <div class="header-controls">
-      <button class="add-note-btn" onclick="openNoteDialog()">
-        <i class="fas fa-plus"></i>
-        Add Note
-      </button>
-      <button id="themeToggleBtn" class="theme-toggle-btn">
-        <i class="fas fa-moon"></i>
-      </button>
-      <button class="logout-btn" onclick="handleLogout()">
-        <i class="fas fa-sign-out-alt"></i>
-        Logout
-      </button>
+    <div id="headerExpandedContent" class="header-expanded-content-wrapper">
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Actions</h3>
+        <button class="add-note-btn" onclick="openNoteDialog()">
+          <i class="ri-add-large-line"></i> <span>Add New Note</span>
+        </button>
+        <button id="exportNotesBtn" class="export-import-btn" title="Export Notes">
+          <i class="ri-download-line"></i> <span>Export Notes</span>
+        </button>
+        <input type="file" id="importNotesInput" accept="application/json" style="display: none" />
+        <button id="importNotesBtn" class="export-import-btn" title="Import Notes">
+          <i class="ri-upload-line"></i> <span>Import Notes</span>
+        </button>
+        <button id="deleteAllNotesBtn" class="delete-all-btn" title="Delete All Notes">
+          <i class="ri-delete-bin-line"></i> <span>Delete All Notes</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Panels</h3>
+        <div class="filter-tabs">
+          <button class="filter-btn active" onclick="setFilter('all')">
+            <span>Active Notes </span> <i class="ri-menu-line"></i>
+          </button>
+          <button class="filter-btn" onclick="setFilter('archived')">
+            <span>Archived Notes </span> <i class="ri-archive-line"></i>
+          </button>
+          <button class="filter-btn" onclick="setFilter('statistics')">
+            <span>Notes Statistics </span> <i class="ri-bar-chart-line"></i>
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Account</h3>
+        <button class="logout-btn" onclick="handleLogout()" title="Logout">
+          <i class="ri-logout-box-line"></i> <span>Logout</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Theme</h3>
+        <div class="color-palette">
+          <div class="color-circle blue active" data-color="#4194e2" title="Blue"></div>
+          <div class="color-circle orange" data-color="#F5871E" title="Orange"></div>
+          <div class="color-circle yellow" data-color="#FCC419" title="Yellow"></div>
+          <div class="color-circle green" data-color="#83C70E" title="Green"></div>
+          <div class="color-circle purple" data-color="#CC5DE8" title="Purple"></div>
+          <div class="color-circle pink" data-color="#ED64C8" title="Pink"></div>
+        </div>
+      </div>
     </div>
   </header>
-
-  <!-- Notes Section -->
-  <section>
-    <div class="section-header">
-      <h2 class="section-title">Your Notes</h2>
-      <div class="view-options">
-        <!-- Future: Add view toggle options here -->
+  <div id="mainWrapper" class="main-wrapper">
+    <aside class="sidebar">
+      <h2 class="header-title">
+        <div class="title-main-row">
+          <img id="appLogo" src="assets/images/logo/note-logo-blue.webp" alt="Quick Notes Logo" class="logo" />
+          <span class="main-title">QNT42</span>
+        </div>
+        <div class="header-subtitle">Your quick note-taking app</div>
+      </h2>
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Actions</h3>
+        <button class="add-note-btn" onclick="openNoteDialog()">
+          <i class="ri-add-large-line"></i> <span>Add New Note</span>
+        </button>
+        <button id="sidebarExportNotesBtn" class="export-import-btn" title="Export Notes">
+          <i class="ri-download-line"></i> <span>Export Notes</span>
+        </button>
+        <input type="file" id="sidebarImportNotesInput" accept="application/json" style="display: none" />
+        <button id="sidebarImportNotesBtn" class="export-import-btn" title="Import Notes">
+          <i class="ri-upload-line"></i> <span>Import Notes</span>
+        </button>
+        <button id="sidebarDeleteAllNotesBtn" class="delete-all-btn" title="Delete All Notes">
+          <i class="ri-delete-bin-line"></i> <span>Delete All Notes</span>
+        </button>
       </div>
-    </div>
-    
-    <main id="notesContainer" class="notes-grid">
-      <!-- Notes will be rendered here -->
-    </main>
-  </section>
-
-  <!-- Note Creation/Edit Dialog -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Panels</h3>
+        <div class="filter-tabs">
+          <button class="filter-btn active" onclick="setFilter('all')">
+            <span>Active Notes </span> <i class="ri-menu-line"></i>
+          </button>
+          <button class="filter-btn" onclick="setFilter('archived')">
+            <span>Archived Notes </span> <i class="ri-archive-line"></i>
+          </button>
+          <button class="filter-btn" onclick="setFilter('statistics')">
+            <span>Notes Statistics </span> <i class="ri-bar-chart-line"></i>
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Account</h3>
+        <button class="logout-btn" onclick="handleLogout()" title="Logout">
+          <i class="ri-logout-box-line"></i> <span>Logout</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Theme</h3>
+        <div class="color-palette">
+          <div class="color-circle blue active" data-color="#4194e2" title="Blue"></div>
+          <div class="color-circle orange" data-color="#F5871E" title="Orange"></div>
+          <div class="color-circle yellow" data-color="#FCC419" title="Yellow"></div>
+          <div class="color-circle green" data-color="#83C70E" title="Green"></div>
+          <div class="color-circle purple" data-color="#CC5DE8" title="Purple"></div>
+          <div class="color-circle pink" data-color="#ED64C8" title="Pink"></div>
+        </div>
+      </div>
+    </aside>
+    <main id="notesContainer" class="notes-grid"></main>
+  </div>
   <dialog id="noteDialog">
     <div class="dialog-content">
       <div class="dialog-header">
         <h2 class="dialog-title" id="dialogTitle">Add New Note</h2>
-        <button class="close-btn" onclick="closeNoteDialog()" title="Close">
-          <i class="fas fa-times"></i>
-        </button>
+        <button class="close-btn" onclick="closeNoteDialog()">&times;</button>
       </div>
-
       <form id="noteForm">
         <div class="form-group">
           <label for="noteTitle" class="form-label">Title</label>
-          <input type="text" id="noteTitle" class="form-input" placeholder="Enter a catchy title..." required maxlength="100">
-          <div class="character-count">
-            <span id="titleCount">0</span>/100
-          </div>
+          <input type="text" id="noteTitle" class="form-input" required />
         </div>
-        
         <div class="form-group">
           <label for="noteContent" class="form-label">Content</label>
-          <textarea id="noteContent" class="form-textarea" placeholder="Share your thoughts, ideas, or reminders..." required maxlength="2000"></textarea>
-          <div class="character-count">
-            <span id="contentCount">0</span>/2000
-          </div>
+          <textarea id="noteContent" class="form-textarea" required></textarea>
         </div>
-
+        <div class="form-group">
+          <label for="noteKeywords" class="form-label">Keywords (comma separated)</label>
+          <input type="text" id="noteKeywords" class="form-input" placeholder="e.g. work, ideas, personal" />
+        </div>
         <div class="dialog-actions">
           <button type="button" class="cancel-btn" onclick="closeNoteDialog()">
             Cancel
           </button>
           <button type="submit" class="save-btn">
-            <i class="fas fa-save"></i>
-            Save Note
+            <i class="ri-save-line"></i> Save Note
           </button>
         </div>
       </form>
     </div>
   </dialog>
+  <div id="customAlert" class="custom-alert hidden">
+    <div class="custom-alert-box" id="customAlertBox">
+      <h3 id="alertTitle"></h3>
+      <p id="alertMessage"></p>
+      <div class="alert-buttons">
+        <button id="confirmAlertBtn" class="alert-btn confirm">
+          Confirm
+        </button>
+        <button id="cancelAlertBtn" class="alert-btn cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <!-- JavaScript Modules -->
   <script type="module">
     import { auth } from './assets/js/config.js';
     import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+    import './assets/js/auth-guard.js';
     import './services/logout.js';
-
-    // Initialize user authentication and dashboard
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const username = user.displayName || user.email?.split('@')[0] || 'User';
-        document.getElementById('user-username').textContent = username;
-      }
-    });
-
-    // Character counters for form inputs
-    document.addEventListener('DOMContentLoaded', () => {
-      const titleInput = document.getElementById('noteTitle');
-      const contentInput = document.getElementById('noteContent');
-      const titleCount = document.getElementById('titleCount');
-      const contentCount = document.getElementById('contentCount');
-
-      titleInput?.addEventListener('input', () => {
-        titleCount.textContent = titleInput.value.length;
-      });
-
-      contentInput?.addEventListener('input', () => {
-        contentCount.textContent = contentInput.value.length;
-      });
-    });
   </script>
-  
-  <!-- Notes functionality -->
-  <script src="assets/js/notes.js"></script>
 </body>
 
 </html>
