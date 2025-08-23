@@ -56,7 +56,7 @@ function initAuthGuard() {
         // Redirect to login if a protected page is accessed by a guest
         if (!user) {
           console.log('Redirecting unauthenticated user to login.');
-          redirectTo('/src/login.html');
+          redirectTo('/auth/login');
           return;
         }
         break;
@@ -64,7 +64,7 @@ function initAuthGuard() {
         // Redirect to dashboard if a guest page is accessed by an authenticated user
         if (user) {
           console.log('Redirecting authenticated user to dashboard.');
-          redirectTo('/src/dashboard.html');
+          redirectTo('/dashboard'); 
           return;
         }
         break;
