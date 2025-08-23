@@ -464,3 +464,96 @@ function closeNoteDialog() {
     editingNoteId = null;
 }
 
+/**************************************/
+/*      IMPORT/EXPORT FUNCTIONS       */
+/**************************************/
+
+/**
+ * Exports all notes as a JSON file
+ */
+function exportNotes() {
+    closeExpandedHeader();
+    if (notes.length === 0) {
+        showCustomAlert("Export Failed", "No notes to export.", false);
+        return;
+    }
+
+    // Create and download JSON file
+    const dataStr = JSON.stringify(notes, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+
+    // Generate timestamped filename
+    const now = new Date();
+    const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-');
+    const defaultFilename = `quick_notes_${timestamp}.json`;
+    a.download = defaultFilename;
+
+    // Trigger download
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+/**
+ * Imports notes from a JSON file
+ * @param {Event} event - File input change event
+ */
+function importNotes(event) {
+    closeExpandedHeader();
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== "application/json") {
+        showCustomAlert("Operation Failed", "Invalid file type. Please upload a JSON file.", false);
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const importedNotes = JSON.parse(e.target.result);
+
+            // Validate JSON structure
+            if (!Array.isArray(importedNotes)) {
+                showCustomAlert("Operation Failed", "Invalid JSON format. Expected an array of notes.", false);
+                return;
+            }
+
+            let newNotesCount = 0;
+
+            // Process each imported note
+            importedNotes.forEach((note) => {
+                // Validate note structure
+                if (note.id && note.title && note.content && note.createdAt && note.modifiedAt &&
+                    Array.isArray(note.keywords) && typeof note.pinned === "boolean" &&
+                    typeof note.archived === "boolean") {
+
+                    // Check for duplicates by ID
+                    if (!notes.find((n) => n.id === note.id)) {
+                        notes.push(note);
+                        newNotesCount++;
+                    }
+                }
+            });
+
+            // Show import results
+            if (newNotesCount === 0) {
+                showCustomAlert("Operation Failed", "No new notes were imported (all duplicates).", false);
+            } else {
+                showCustomAlert("Operation Succeeded", `${newNotesCount} note(s) imported successfully.`, false);
+                saveNotes();
+                renderNotes();
+            }
+        } catch (error) {
+            showCustomAlert("Operation Failed", "Failed to import notes: Invalid JSON file.", false);
+        }
+    };
+
+    reader.readAsText(file);
+    event.target.value = ""; // Reset file input
+}
