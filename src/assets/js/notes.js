@@ -557,3 +557,96 @@ function importNotes(event) {
     reader.readAsText(file);
     event.target.value = ""; // Reset file input
 }
+
+/**************************************/
+/*   THEME AND APPEARANCE FUNCTIONS   */
+/**************************************/
+
+
+/**
+ * Toggles between light and dark theme
+ */
+function toggleTheme() {
+    closeExpandedHeader();
+    document.body.classList.toggle("dark-theme");
+    localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
+}
+
+/**
+ * Applies the stored theme preference on page load
+ */
+function applyStoredTheme() {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+        document.body.classList.add("dark-theme");
+    } else {
+        document.body.classList.remove("dark-theme");
+    }
+}
+
+/**
+ * Changes the color theme of the application
+ * @param {string} colorName - Name of the color theme to apply
+ */
+function changeColorTheme(colorName) {
+    closeExpandedHeader();
+
+    // Remove all existing color theme classes
+    Object.keys(COLOR_THEMES).forEach((theme) => {
+        document.body.classList.remove(`${theme}-theme`);
+    });
+
+    // Apply new color theme
+    document.body.classList.add(`${colorName}-theme`);
+    localStorage.setItem("colorTheme", colorName);
+    updateFaviconAndLogo(colorName);
+
+    // Update color picker UI
+    const colorCircles = document.querySelectorAll(".color-circle");
+    colorCircles.forEach((circle) => {
+        circle.classList.remove("active");
+        if (circle.classList.contains(colorName)) {
+            circle.classList.add("active");
+        }
+    });
+}
+
+/**
+ * Applies the stored color theme preference on page load
+ */
+function applyStoredColorTheme() {
+    const storedColorTheme = localStorage.getItem("colorTheme");
+    if (storedColorTheme) {
+        changeColorTheme(storedColorTheme);
+    } else {
+        changeColorTheme("blue"); // Default theme
+    }
+}
+
+/**
+ * Updates favicon and logo to match the current color theme
+ * @param {string} colorName - Name of the color theme
+ */
+function updateFaviconAndLogo(colorName) {
+    const faviconLink = document.querySelector("link[rel='icon']");
+    if (faviconLink) {
+        faviconLink.href = `assets/images/logo/favicon-${colorName}.ico`;
+    }
+
+    const appLogo = document.getElementById("appLogo");
+    if (appLogo) {
+        appLogo.src = `assets/images/logo/note-logo-${colorName}.webp`;
+    }
+}
+
+function setFilter(filterType) {
+    closeExpandedHeader();
+    currentFilter = filterType;
+    document.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.classList.remove("active");
+    });
+    document.querySelector(`.filter-btn[onclick="setFilter('${filterType}')"]`).classList.add("active");
+    document.getElementById("searchInput").value = "";
+    renderNotes();
+}
+
