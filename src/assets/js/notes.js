@@ -377,3 +377,47 @@ function renderNotes(filteredNotes) {
         </div> 
     `).join("");
 }
+
+/**************************************/
+/*    SEARCH AND FILTER FUNCTIONS     */
+/**************************************/
+
+/**
+ * Filters notes based on search query and current filter
+ * Searches through title, content, and keywords
+ * @param {string} query - Search query string
+ * @returns {Array} Filtered array of notes
+ */
+function filterNotes(query) {
+    const lowerQuery = query.toLowerCase().trim();
+    if (currentFilter === "statistics") return notes;
+
+    return notes.filter((note) => {
+        // Filter by archive status first
+        if (note.archived && currentFilter === "all") return false;
+        if (!note.archived && currentFilter === "archived") return false;
+
+        // Then filter by search query
+        const searchableString = [note.title, note.content, note.keywords.join(" ")].join(" ").toLowerCase();
+        return searchableString.includes(lowerQuery);
+    });
+}
+
+/**
+ * Sets the current filter view and updates UI
+ * @param {string} filterType - Filter type: "all", "archived", or "statistics"
+ */
+function setFilter(filterType) {
+    closeExpandedHeader();
+    currentFilter = filterType;
+
+    // Update filter button states
+    document.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.classList.remove("active");
+    });
+    document.querySelector(`.filter-btn[onclick="setFilter('${filterType}')"]`).classList.add("active");
+
+    // Clear search and re-render
+    document.getElementById("searchInput").value = "";
+    renderNotes();
+}
