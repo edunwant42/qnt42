@@ -223,3 +223,157 @@ function toggleArchive(noteId) {
     }
 }
 
+/**************************************/
+/*   RENDERING AND DISPLAY FUNCTIONS  */
+/**************************************/
+
+/**
+ * Renders notes in the main container based on current filter
+ * Handles three views: statistics, notes grid, and empty state
+ * @param {Array} filteredNotes - Optional pre-filtered array of notes
+ */
+function renderNotes(filteredNotes) {
+    const container = document.getElementById("notesContainer");
+    let notesToRender = Array.isArray(filteredNotes) ? filteredNotes : notes;
+
+    // Handle statistics view
+    if (currentFilter === "statistics") {
+        container.style.display = "flex";
+        container.style.flexDirection = "column";
+        container.style.justifyContent = "center";
+        container.style.alignItems = "center";
+
+        // Calculate statistics
+        const total = notes.length;
+        const active = notes.filter((n) => !n.archived).length;
+        const archived = notes.filter((n) => n.archived).length;
+        const pinned = notes.filter((n) => n.pinned).length;
+        const keywords = new Set(notes.flatMap((n) => n.keywords)).size;
+
+        // Render statistics cards
+        container.innerHTML = ` 
+            <div class="stats-view active"> 
+                <h2 class="stats-title"> Statistics</h2> 
+                <div class="stats-grid"> 
+                    <div class="stat-card"> 
+                        <i class="ri-file-list-3-line stat-icon"></i> 
+                        <h3>Total Notes</h3> 
+                        <p class="stat-number" data-value="${total}">0</p> 
+                    </div> 
+                    <div class="stat-card"> 
+                        <i class="ri-edit-2-line stat-icon"></i> 
+                        <h3>Active Notes</h3> 
+                        <p class="stat-number" data-value="${active}">0</p> 
+                    </div> 
+                    <div class="stat-card"> 
+                        <i class="ri-archive-line stat-icon"></i> 
+                        <h3>Archived</h3> 
+                        <p class="stat-number" data-value="${archived}">0</p> 
+                    </div> 
+                    <div class="stat-card"> 
+                        <i class="ri-pushpin-line stat-icon"></i> 
+                        <h3>Pinned</h3> 
+                        <p class="stat-number" data-value="${pinned}">0</p> 
+                    </div> 
+                    <div class="stat-card"> 
+                        <i class="ri-price-tag-3-line stat-icon"></i> 
+                        <h3>Unique Keywords</h3> 
+                        <p class="stat-number" data-value="${keywords}">0</p> 
+                    </div> 
+                </div> 
+            </div> 
+        `;
+
+        // Animate statistics numbers with counting effect
+        container.querySelectorAll(".stat-number").forEach((el) => {
+            const target = +el.dataset.value;
+            let count = 0;
+            const step = Math.max(1, Math.floor(target / 30));
+            const interval = setInterval(() => {
+                count += step;
+                if (count >= target) {
+                    el.textContent = target;
+                    clearInterval(interval);
+                } else {
+                    el.textContent = count;
+                }
+            }, 50);
+        });
+        return;
+    }
+
+    // Filter notes based on current view
+    if (currentFilter === "archived") {
+        notesToRender = notesToRender.filter((note) => note.archived);
+    } else {
+        notesToRender = notesToRender.filter((note) => !note.archived);
+    }
+
+    // Handle empty state
+    if (notesToRender.length === 0) {
+        container.style.display = "flex";
+        container.style.flexDirection = "column";
+        container.style.justifyContent = "center";
+        container.style.alignItems = "center";
+
+        container.innerHTML = ` 
+            <div class="empty-state"> 
+                <img class="no-notes-image" src="assets/images/no-item.webp" alt="No Notes" /> 
+                <p>${currentFilter === "archived" ?
+                "<h1>No archived notes found.</h1><br> Create a new note, or archive some existing notes!" :
+                "<h1>No notes found.</h1><br> Create your first note to get started!"
+            }</p> 
+                <button class="add-note-btn" onclick="openNoteDialog()"> 
+                    <i class="ri-add-line"></i> Add Your First Note 
+                </button> 
+            </div> 
+        `;
+        return;
+    }
+
+    // Sort notes: pinned first, then by creation date (newest first)
+    const sortedNotes = [...notesToRender].sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    // Set up grid layout for notes
+    container.style.display = "grid";
+    container.style.gridTemplateColumns = "repeat(auto-fill, minmax(350px, 1fr))";
+    container.style.gap = "1.5rem";
+    container.style.alignItems = "start";
+    container.style.justifyContent = "center";
+    container.style.padding = "1rem";
+
+    // Render note cards
+    container.innerHTML = sortedNotes.map((note) => ` 
+        <div class="note-card"> 
+            <div class="note-body"> 
+                <h3 class="note-title"> 
+                    <i class="pin-icon ri-${note.pinned ? "pushpin-fill" : "pushpin-line"}" 
+                       onclick="togglePin('${note.id}')" 
+                       title="${note.pinned ? "Unpin Note" : "Pin Note"}" 
+                       style="cursor: pointer; margin-right: 0.5rem; vertical-align: middle;"></i> 
+                    ${note.title} 
+                </h3> 
+                <hr class="note-separator" /> 
+                <p class="note-content">${note.content}</p> 
+            </div> 
+            <div class="note-keywords"> 
+                ${note.keywords.map((kw) => `<span class="keyword-tag">${kw}</span>`).join("")} 
+            </div> 
+            <div class="note-actions"> 
+                <button class="edit-btn" onclick="openNoteDialog('${note.id}')" title="Edit Note"> 
+                    <i class="ri-pencil-line"></i> 
+                </button> 
+                <button class="edit-btn" onclick="toggleArchive('${note.id}')" title="${note.archived ? "Unarchive Note" : "Archive Note"}"> 
+                    <i class="ri-archive-${note.archived ? "line" : "fill"}"></i> 
+                </button> 
+                <button class="delete-btn" onclick="deleteNote('${note.id}')" title="Delete Note"> 
+                    <i class="ri-delete-bin-6-line"></i> 
+                </button> 
+            </div> 
+        </div> 
+    `).join("");
+}
