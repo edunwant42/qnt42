@@ -421,3 +421,46 @@ function setFilter(filterType) {
     document.getElementById("searchInput").value = "";
     renderNotes();
 }
+
+/**************************************/
+/*    DIALOG AND MODAL FUNCTIONS      */
+/**************************************/
+
+/**
+ * Opens the note creation/editing dialog
+ * @param {string|null} noteId - ID of note to edit, or null for new note
+ */
+function openNoteDialog(noteId = null) {
+    closeExpandedHeader();
+    const dialog = document.getElementById("noteDialog");
+    const form = document.getElementById("noteForm");
+    const titleInput = document.getElementById("noteTitle");
+    const contentInput = document.getElementById("noteContent");
+    const keywordsInput = document.getElementById("noteKeywords");
+
+    editingNoteId = noteId;
+
+    if (noteId) {
+        // Populate form with existing note data
+        const note = notes.find((n) => n.id === noteId);
+        if (note) {
+            titleInput.value = note.title;
+            contentInput.value = note.content;
+            keywordsInput.value = note.keywords.join(", ");
+        }
+    } else {
+        // Reset form for new note
+        form.reset();
+    }
+
+    dialog.showModal();
+}
+
+/**
+ * Closes the note dialog and resets editing state
+ */
+function closeNoteDialog() {
+    document.getElementById("noteDialog").close();
+    editingNoteId = null;
+}
+
