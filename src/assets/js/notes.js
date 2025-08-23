@@ -103,3 +103,123 @@ function showCustomAlert(title, message, isConfirmation = false, confirmCallback
 function closeCustomAlert() {
     document.getElementById("customAlert").classList.add("hidden");
 }
+
+/**************************************/
+/*      NOTE MANAGEMENT FUNCTIONS     */
+/**************************************/
+
+/**
+ * Saves a new note or updates an existing one
+ * Handles form validation, keyword processing, and duplicate detection
+ * @param {Event} event - Form submit event
+ */
+function saveNote(event) {
+    event.preventDefault();
+    const title = document.getElementById("noteTitle").value.trim();
+    const content = document.getElementById("noteContent").value.trim();
+    const keywordsInput = document.getElementById("noteKeywords").value.trim();
+
+    // Process keywords: split, trim, convert to lowercase, and remove duplicates
+    const rawKeywords = keywordsInput ? keywordsInput.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean) : [];
+    const uniqueKeywords = [...new Set(rawKeywords)];
+    const MAX_KEYWORDS = 5;
+
+    // Validate keywords
+    if (rawKeywords.length !== uniqueKeywords.length) {
+        showCustomAlert("Duplicate Keywords", "You have entered duplicate keywords. Only unique keywords will be saved.", false);
+    }
+    if (uniqueKeywords.length > MAX_KEYWORDS) {
+        showCustomAlert("Too Many Keywords", `You can only add up to ${MAX_KEYWORDS} keywords. The first ${MAX_KEYWORDS} will be used.`, false);
+        uniqueKeywords.splice(MAX_KEYWORDS);
+    }
+
+    const now = new Date().toISOString();
+
+    // Update existing note or create new one
+    if (editingNoteId) {
+        const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+        notes[noteIndex] = {
+            ...notes[noteIndex],
+            title,
+            content,
+            modifiedAt: now,
+            keywords: uniqueKeywords,
+        };
+    } else {
+        // Create new note and add to beginning of array
+        notes.unshift({
+            id: generateId(),
+            title,
+            content,
+            createdAt: now,
+            modifiedAt: now,
+            keywords: uniqueKeywords,
+            pinned: false,
+            archived: false,
+        });
+    }
+
+    // Clean up and refresh UI
+    closeNoteDialog();
+    saveNotes();
+    renderNotes();
+    document.getElementById("searchInput").value = "";
+}
+
+/**
+ * Deletes a specific note by ID
+ * @param {string} noteId - ID of the note to delete
+ */
+function deleteNote(noteId) {
+    closeExpandedHeader();
+    notes = notes.filter((note) => note.id !== noteId);
+    saveNotes();
+    renderNotes();
+}
+
+/**
+ * Deletes all notes after user confirmation
+ */
+function deleteAllNotes() {
+    closeExpandedHeader();
+    if (notes.length === 0) {
+        showCustomAlert("No Notes", "There are no notes to delete.", false);
+        return;
+    }
+    showCustomAlert("Delete All Notes?", "Are you sure you want to delete ALL notes? This action cannot be undone.", true, function () {
+        notes = [];
+        saveNotes();
+        renderNotes();
+    });
+}
+
+/**
+ * Toggles the pinned status of a note
+ * @param {string} noteId - ID of the note to toggle
+ */
+function togglePin(noteId) {
+    closeExpandedHeader();
+    const note = notes.find((n) => n.id === noteId);
+    if (note) {
+        note.pinned = !note.pinned;
+        note.modifiedAt = new Date().toISOString();
+        saveNotes();
+        renderNotes();
+    }
+}
+
+/**
+ * Toggles the archived status of a note
+ * @param {string} noteId - ID of the note to toggle
+ */
+function toggleArchive(noteId) {
+    closeExpandedHeader();
+    const note = notes.find((n) => n.id === noteId);
+    if (note) {
+        note.archived = !note.archived;
+        note.modifiedAt = new Date().toISOString();
+        saveNotes();
+        renderNotes();
+    }
+}
+
