@@ -783,3 +783,82 @@ function toggleSidebar() {
         }
     }
 }
+
+/**************************************/
+/* INITIALIZATION AND EVENT LISTENERS */
+/**************************************/
+
+
+/**
+ * Initializes the application when DOM is loaded
+ * Sets up event listeners, loads stored data, and applies themes
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    // Load stored notes and render initial view
+    notes = loadNotes();
+    renderNotes();
+
+    // Apply stored user preferences
+    applyStoredTheme();
+    applyStoredColorTheme();
+
+    // Set up sidebar toggle functionality
+    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener("click", toggleSidebar);
+    }
+
+    // Set up form and dialog event listeners
+    document.getElementById("noteForm").addEventListener("submit", saveNote);
+    document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
+
+    // Close dialog when clicking outside of it
+    document.getElementById("noteDialog").addEventListener("click", (event) => {
+        if (event.target === event.currentTarget) {
+            closeNoteDialog();
+        }
+    });
+
+    // Set up search functionality
+    document.getElementById("searchInput").addEventListener("input", (event) => {
+        const query = event.target.value.trim();
+        if (query === "") {
+            renderNotes();
+        } else {
+            renderNotes(filterNotes(query));
+        }
+    });
+
+    // Set up header action buttons
+    document.getElementById("exportNotesBtn").addEventListener("click", exportNotes);
+    document.getElementById("importNotesBtn").addEventListener("click", () =>
+        document.getElementById("importNotesInput").click()
+    );
+    document.getElementById("importNotesInput").addEventListener("change", importNotes);
+    document.getElementById("deleteAllNotesBtn").addEventListener("click", deleteAllNotes);
+
+    // Set up sidebar action buttons
+    document.getElementById("sidebarExportNotesBtn").addEventListener("click", exportNotes);
+    document.getElementById("sidebarImportNotesBtn").addEventListener("click", () =>
+        document.getElementById("sidebarImportNotesInput").click()
+    );
+    document.getElementById("sidebarImportNotesInput").addEventListener("change", importNotes);
+    document.getElementById("sidebarDeleteAllNotesBtn").addEventListener("click", deleteAllNotes);
+
+    // Set up color theme picker
+    document.querySelectorAll(".color-circle").forEach((circle) => {
+        circle.addEventListener("click", () => {
+            const color = circle.dataset.color;
+            const colorName = Object.keys(COLOR_THEMES).find((key) => COLOR_THEMES[key] === color);
+            if (colorName) {
+                changeColorTheme(colorName);
+            }
+        });
+    });
+
+    // Handle initial responsive layout
+    handleResize();
+});
+
+// Set up window resize listener for responsive behavior
+window.addEventListener('resize', handleResize);
