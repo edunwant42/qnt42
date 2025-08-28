@@ -1,4 +1,4 @@
-name: Build and deploy to GitHub Pages
+name: Build and deploy QNT42 to GitHub Pages
 
 on:
   push:
@@ -36,4 +36,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist   # change if your build output folder is different
+          publish_dir: ./dist 
