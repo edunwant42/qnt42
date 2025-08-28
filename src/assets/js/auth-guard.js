@@ -5,7 +5,7 @@ import {
     dbRef,
     get,
     child
-} from '/src/assets/js/config.js';
+} from 'src/assets/js/config.js';
 
 
 // Page types for authentication control
@@ -17,9 +17,9 @@ const PAGE_TYPES = {
 
 // Canonical routes used across the app
 const ROUTES = {
-    DASHBOARD: '/src/pages/dashboard',
-    LOGIN: '/src/pages/auth/login',
-    REGISTER: '/src/pages/auth/register',
+    DASHBOARD: 'src/pages/dashboard.html',
+    LOGIN: 'src/pages/auth/login.html',
+    REGISTER: 'src/pages/auth/register.html',
     HOME: '/'
 };
 
@@ -31,18 +31,18 @@ function getCurrentPageType() {
     const path = window.location.pathname.toLowerCase();
 
     // Protected dashboard pages
-    if (path.includes('dashboard') || path.includes('/src/pages/dashboard')) {
+    if (path.includes('dashboard.html') || path.includes('/src/pages/dashboard.html')) {
         return PAGE_TYPES.AUTH_ONLY;
     }
 
     // Guest-only pages (login, register, index/home)
     if (
-        path.includes('/auth/login') ||
-        path.includes('/auth/register') ||
-        path.includes('login') && path.includes('auth') ||
-        path.includes('register') && path.includes('auth') ||
+        path.includes('/auth/login.html') ||
+        path.includes('/auth/register.html') ||
+        path.includes('login.html') && path.includes('auth') ||
+        path.includes('register.html') && path.includes('auth') ||
         path === '/' ||
-        path.includes('index')
+        path.includes('index.html')
     ) {
         return PAGE_TYPES.GUEST_ONLY;
     }

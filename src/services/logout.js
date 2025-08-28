@@ -1,5 +1,5 @@
-import { auth, signOut } from "/src/assets/js/config.js";
-import { clearOutNotifs, startInactivityTimer } from "/src/assets/js/utils.js";
+import { auth, signOut } from "src/assets/js/config.js";
+import { clearOutNotifs, startInactivityTimer } from "src/assets/js/utils.js";
 
 /**
  * Global logout handler used by onclick="handleLogout()" in Dashboard page.

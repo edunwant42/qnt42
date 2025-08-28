@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/src/assets/images/logo/favicon-blue.ico" />
+    <link rel="icon" type="image/x-icon" href="src/assets/images/logo/favicon-blue.ico" />
     <title>QNT42 - Register</title>
     <link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/src/assets/css/auth.css" />
+    <link rel="stylesheet" href="src/assets/css/auth.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/src/assets/css/notifier.css">
-    <script type="module" src="/src/assets/js/auth-guard.js" defer></script>
-    <script type="module" src="/src/services/register.js" defer></script>
-    <script src="/src/assets/js/notifier.js" defer></script>
+    <link rel="stylesheet" href="src/assets/css/notifier.css">
+    <script type="module" src="src/assets/js/auth-guard.js" defer></script>
+    <script type="module" src="src/services/register.js" defer></script>
+    <script src="src/assets/js/notifier.js" defer></script>
 </head>
 
 <body class="register-page">
@@ -59,23 +59,23 @@
         <div class="welcome-section">
             <!-- Background Vector -->
             <div class="background-vector">
-                <img src="/src/assets/images/Vector.svg" alt="Background Shape">
+                <img src="src/assets/images/Vector.svg" alt="Background Shape">
             </div>
 
             <div class="welcome-content">
                 <h1>One of us?</h1>
                 <p>Welcome back! Please sign in to access your account.</p>
-                <a href="/src/pages/auth/login" class="btn btn-outline">SIGN IN</a>
+                <a href="src/pages/auth/login.html" class="btn btn-outline">SIGN IN</a>
 
                 <div class="welcome-image">
-                    <img src="/src/assets/images/login.webp" alt="Welcome Illustration">
+                    <img src="src/assets/images/login.webp" alt="Welcome Illustration">
                 </div>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { attachGeneratePasswordButton } from "/src/assets/js/utils.js";
+        import { attachGeneratePasswordButton } from "src/assets/js/utils.js";
 
         document.addEventListener("DOMContentLoaded", () => {
             attachGeneratePasswordButton("generatePasswordBtn", "password", 16);
