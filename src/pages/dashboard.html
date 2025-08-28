@@ -7,25 +7,22 @@
   <meta name="description"
     content="Quick Notes 42: Your personal, fast, and customizable note-taking web application with dynamic themes and statistics." />
   <meta name="keywords"
-    content="notes, note-taking, web app, productivity, quick notes, personal organizer, themes, statistics, QN42, edunwant42" />
+    content="notes, note-taking, web app, productivity, quick notes, personal organizer, themes, statistics, QNT42, edunwant42" />
   <meta name="author" content="edunwant42" />
   <meta name="robots" content="index, follow" />
-  <meta property="og:title" content="Quick Notes 42 - Your Personal Note-Taking Web App" />
+  <meta property="og:title" content="QNT42 - Your Personal Note-Taking Web App" />
   <meta property="og:description"
-    content="Organize your thoughts with Quick Notes 42 – a customizable web app with dynamic themes, note statistics, and powerful management tools." />
+    content="Organize your thoughts with QNT42, your customizable web app with dynamic themes, note statistics, and powerful management tools." />
   <meta property="og:image" content="https://ababdelo.github.io/QN42/assets/images/logo/note-logo-blue.webp" />
   <meta property="og:url" content="https://ababdelo.github.io/QN42/" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_US" />
-  <link rel="icon" type="image/x-icon" href="assets/images/logo/favicon-blue.ico" />
+  <link rel="icon" type="image/x-icon" href="/src/assets/images/logo/favicon-blue.ico" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Gugi&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
-    rel="stylesheet" />
   <title>QNTT42 - Dashboard</title>
   <link rel="stylesheet" href="/src/assets/css/dashboard.css" />
+  <script type="module" src="/src/assets/js/auth-guard.js" defer></script>
+  <script type="module" src="/src/services/logout.js" defer></script>
   <script src="/src/assets/js/notes.js" defer></script>
 </head>
 
@@ -77,7 +74,7 @@
       </div>
       <div class="sidebar-section">
         <h3 class="sidebar-section-title">Account</h3>
-        <button class="logout-btn" onclick="handleLogout()" title="Logout">
+        <button class="logout-btn" onclick="handleLogout(false)" title="Logout">
           <i class="ri-logout-box-line"></i> <span>Logout</span>
         </button>
       </div>
@@ -135,7 +132,7 @@
       </div>
       <div class="sidebar-section">
         <h3 class="sidebar-section-title">Account</h3>
-        <button class="logout-btn" onclick="handleLogout()" title="Logout">
+        <button class="logout-btn" onclick="handleLogout(false)" title="Logout">
           <i class="ri-logout-box-line"></i> <span>Logout</span>
         </button>
       </div>
@@ -195,14 +192,6 @@
       </div>
     </div>
   </div>
-
-  <!-- JavaScript Modules -->
-  <script type="module">
-    import { auth } from '/src/assets/js/config.js';
-    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
-    import '/src/assets/js/auth-guard.js';
-    import '/src/services/logout.js';
-  </script>
 </body>
 
 </html>
