@@ -116,3 +116,24 @@ export function generateSecretKey() {
     // Convert bytes to Base64 string for storage
     return btoa(String.fromCharCode(...keyBytes));
 }
+
+/**
+ * Removes notification messages (info, success, error, warning) stored in sessionStorage.
+ * 
+ * @param {string} [type] - Optional. The specific notification type to clear. 
+ *                         Valid values: "info", "success", "error", "warning".
+ *                         If omitted or invalid, all notification types will be cleared.
+ */
+export function clearOutNotifs(type) {
+    switch (type) {
+        case "info": sessionStorage.removeItem("info"); break;
+        case "success": sessionStorage.removeItem("success"); break;
+        case "error": sessionStorage.removeItem("error"); break;
+        case "warning": sessionStorage.removeItem("warning"); break;
+        default:
+            sessionStorage.removeItem("info");
+            sessionStorage.removeItem("success");
+            sessionStorage.removeItem("error");
+            sessionStorage.removeItem("warning");
+    }
+}
