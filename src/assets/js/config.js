@@ -1,12 +1,11 @@
-
-// Load Firebase secrets from .env file
+// Load Firebase secrets directly
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: "AIzaSyCZ8xN6-uAkTmVNHQy-PAjPcAEQ1OG6uUA",
+  authDomain: "qnt42-9639f.firebaseapp.com",
+  projectId: "qnt42-9639f",
+  storageBucket: "qnt42-9639f.firebasestorage.app",
+  messagingSenderId: "54787094346",
+  appId: "1:531135208207:web:c09fa24da5c643f310fc7a"
 };
 
 // Initialize Firebase
