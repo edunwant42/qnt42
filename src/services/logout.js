@@ -1,21 +1,43 @@
-// Import Firebase configuration and auth functions
-import { auth, signOut } from '../assets/js/config.js';
+import { auth, signOut } from "/src/assets/js/config.js";
+import { clearOutNotifs, startInactivityTimer } from "/src/assets/js/utils.js";
 
-// Logout function
-async function handleLogout() {
-  try {
-    await signOut(auth);
-    console.log('User logged out successfully');
-    alert('You have been logged out successfully!');
-    window.location.href = '/';
-  } catch (error) {
-    console.error('Logout error:', error);
-    alert('Error during logout. Please try again.');
-  }
+/**
+ * Global logout handler used by onclick="handleLogout()" in Dashboard page.
+ * - Signs out via Firebase
+ * - Clears any UI-only sessionStorage items (e.g. username)
+ * - Redirects to the public homepage
+ * 
+ * @param {boolean} inactivity - true if logout triggered by inactivity
+ */
+async function handleLogout(inactivity = false) {
+    try {
+        window.isLoggingOut = true; // mark logout in progress
+        await signOut(auth);
+
+        // Remove stored user info
+        localStorage.removeItem("user-info");
+
+        clearOutNotifs(); // clear all notification keys
+
+        // If logout was triggered by inactivity, set info message
+        if (inactivity) {
+            sessionStorage.setItem(
+                "Info",
+                "Info: You have been logged out due to inactivity for your account and data security."
+            );
+        }
+
+        // Redirect to home page
+        window.location.href = "/";
+    } catch (err) {
+        console.error("Logout failed", err);
+        alert("Logout failed. Please try again.");
+    }
 }
 
-// Make logout function globally available
+window.addEventListener("load", startInactivityTimer);
+
+// expose as global so inline onclick="handleLogout()" works
 window.handleLogout = handleLogout;
 
-// Export for module usage
 export { handleLogout };
