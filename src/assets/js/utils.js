@@ -289,3 +289,50 @@ export function attachGeneratePasswordButton(buttonId, passwordFieldId) {
         }
     });
 }
+
+/**
+ * Starts an inactivity timer that automatically logs the user out 
+ * after a fixed period (default: 42 minutes) of no activity.
+ *
+ * Activity events such as keypresses and clicks reset the timer.
+ * If the user remains idle past the timeout, `handleLogout()` is triggered.
+ * 
+ * Internal helpers:
+ *  - resetTimer(): Resets the inactivity timer on user activity.
+ *  - logTimeLeft(): (used for debugging) Logs remaining time until auto-logout.
+ */
+export function startInactivityTimer() {
+    const inactivityLogoutTime = 42 * 60 * 1000; // 42 minutes
+    let timeout;
+    let lastActivityTime = Date.now();
+
+    // Reset timer whenever user interacts
+    function resetTimer() {
+    lastActivityTime = Date.now(); // update on every activity
+    clearTimeout(timeout);
+    timeout = setTimeout(() => handleLogout(true), inactivityLogoutTime);
+}
+
+    // Function to log the remaining time before logout
+    function logTimeLeft() {
+        const timeElapsed = Date.now() - lastActivityTime;
+        const timeLeft = Math.max(inactivityLogoutTime - timeElapsed, 0);
+        console.log(`Time left before logout: ${Math.ceil(timeLeft / 1000)} seconds`);
+    }
+
+    // Activity event listeners
+    document.addEventListener("keypress", resetTimer);
+    document.addEventListener("click", resetTimer);
+
+    /*
+    document.addEventListener("mousemove", resetTimer);
+    document.addEventListener("scroll", resetTimer);
+    document.addEventListener("touchstart", resetTimer);
+    */
+
+    // Start first timer
+    resetTimer();
+
+    // Log time left every second
+    setInterval(logTimeLeft, 1000);
+}
