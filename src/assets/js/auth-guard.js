@@ -35,11 +35,9 @@ function getCurrentPageType() {
 
     // Guest-only pages (login, register, index/home)
     if (
-        path.includes('/auth/login.html') ||
-        path.includes('/auth/register.html') ||
-        (path.includes('login.html') && path.includes('auth')) ||
-        (path.includes('register.html') && path.includes('auth')) ||
-        path === '/' ||
+        path.includes('/qnt42/src/pages/auth/login.html') ||
+        path.includes('/qnt42/src/pages/auth/register.html') ||
+        path === '/qnt42/' ||
         path.includes('index.html')
     ) {
         return PAGE_TYPES.GUEST_ONLY;
