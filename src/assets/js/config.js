@@ -1,4 +1,5 @@
 
+// Load Firebase secrets from .env file
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -13,11 +14,11 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebas
 
 import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
 
-import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
+import { getDatabase, set, get, ref, child } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db = getDatabase(app);
+const dbRef = ref(db);
 
-export { firebaseConfig, auth, db, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut, onAuthStateChanged, doc, setDoc, getDoc };
+export { firebaseConfig, auth, db, dbRef, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut, onAuthStateChanged,set, get, ref, child };
