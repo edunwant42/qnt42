@@ -30,9 +30,9 @@ loginButton.addEventListener("click", async (event) => {
 
   // Run validations
   if (
-    !checkEmptyField("Email", email, redirectTo) ||
-    !checkEmptyField("Password", password, redirectTo) ||
-    !validateEmail(email, redirectTo)
+    !checkEmptyField("Email", email, "redirect", redirectTo) ||
+    !checkEmptyField("Password", password, "redirect", redirectTo) ||
+    !validateEmail(email, "redirect", redirectTo)
   ) {
     return;
   }
