@@ -137,3 +137,29 @@ export function clearOutNotifs(type) {
             sessionStorage.removeItem("warning");
     }
 }
+
+/**
+ * Attach toggle functionality for password input fields with eye icons.
+ *
+ * @param {string} toggleButtonSelector - CSS selector for the toggle buttons (e.g., ".toggle-password").
+ */
+export function attachPasswordToggles(toggleButtonSelector = ".toggle-password") {
+    const toggleButtons = document.querySelectorAll(toggleButtonSelector);
+
+    toggleButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const input = button.previousElementSibling; // The password input
+            if (!input) return;
+
+            // Toggle input type
+            input.type = input.type === "password" ? "text" : "password";
+
+            // Toggle icon class
+            const icon = button.querySelector("i");
+            if (icon) {
+                icon.classList.toggle("fa-eye");
+                icon.classList.toggle("fa-eye-slash");
+            }
+        });
+    });
+}
