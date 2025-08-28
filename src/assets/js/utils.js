@@ -163,3 +163,24 @@ export function attachPasswordToggles(toggleButtonSelector = ".toggle-password")
         });
     });
 }
+
+/**
+ * Generate a cryptographically secure random integer between 0 and max - 1.
+ *
+ * Uses the Web Crypto API to avoid bias, ensuring that each integer in the range
+ * has an equal probability of being selected.
+ *
+ * @param {number} max The exclusive upper bound of the random number (must be > 0).
+ * @return {number} A secure random integer in the range [0, max - 1].
+ */
+function secureRandomInt(max) {
+    const randomBuffer = new Uint32Array(1);
+    const range = 0x100000000; // 2^32
+    const threshold = range - (range % max); // avoid modulo bias
+    let r;
+    do {
+        crypto.getRandomValues(randomBuffer);
+        r = randomBuffer[0];
+    } while (r >= threshold);
+    return r % max;
+}
