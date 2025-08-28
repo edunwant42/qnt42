@@ -8,11 +8,7 @@
   <link rel="icon" type="image/x-icon" href="src/assets/images/logo/favicon-blue.ico" />
   <link rel="stylesheet" href="src/assets/css/home.css" />
   <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css" />
-
-  <!-- Initialize auth guard before content loads -->
-  <script type="module">
-    import "./src/assets/js/auth-guard.js";
-  </script>
+  <script type="module" src="/src/assets/js/auth-guard.js" defer></script>
 </head>
 
 <body>
@@ -32,8 +28,8 @@
         <div class="nav-indicator"></div>
       </nav>
       <div class="auth-buttons">
-        <a href="/auth/login" class="btn secondary">Login</a>
-        <a href="/auth/register" class="btn primary">Sign Up</a>
+        <a href="/src/pages/auth/login" class="btn secondary">Login</a>
+        <a href="/src/pages/auth/register" class="btn primary">Sign Up</a>
       </div>
     </div>
   </header>
