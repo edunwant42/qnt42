@@ -6,7 +6,7 @@ import {
   signOut,
   set,
   ref,
-} from "/qnt42/src/assets/js/config.js";
+} from "/src/assets/js/config.js";
 
 // Import utility functions
 import {
@@ -15,7 +15,7 @@ import {
   validateEmail,
   validatePassword,
   generateSecretKey
-} from "/qnt42/src/assets/js/utils.js";
+} from "/src/assets/js/utils.js";
 
 
 // Get register button
@@ -30,7 +30,7 @@ registerButton.addEventListener("click", (event) => {
   const email = sanitizeInput(document.getElementById("email").value);
   const password = sanitizeInput(document.getElementById("password").value);
 
-  let redirectTo = "/qnt42/src/pages/auth/register.html";
+  let redirectTo = "/src/pages/auth/register.html";
 
   // Run validations
   if (checkEmptyField("Username", username, redirectTo) &&
@@ -50,7 +50,7 @@ registerButton.addEventListener("click", (event) => {
           secretKey: secretKey
         });
         sessionStorage.setItem("success", "Success: Registration successful!");
-        window.location.href = "/qnt42/src/pages/auth/register.html";
+        window.location.href = "/src/pages/auth/register.html";
       }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -73,7 +73,7 @@ registerButton.addEventListener("click", (event) => {
         }
 
         sessionStorage.setItem(notifType, userMessage);
-        window.location.href = "/qnt42/src/pages/auth/register.html";
+        window.location.href = "/src/pages/auth/register.html";
       });
   }
 });

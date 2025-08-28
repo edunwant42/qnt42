@@ -4,7 +4,7 @@ import {
     dbRef,
     get,
     child
-} from '/qnt42/src/assets/js/config.js';
+} from '/src/assets/js/config.js';
 
 // Page types for authentication control
 const PAGE_TYPES = {
@@ -15,10 +15,10 @@ const PAGE_TYPES = {
 
 // Canonical routes used across the app
 const ROUTES = {
-    DASHBOARD: '/qnt42/src/pages/dashboard.html',
-    LOGIN: '/qnt42/src/pages/auth/login.html',
-    REGISTER: '/qnt42/src/pages/auth/register.html',
-    HOME: '/qnt42/'
+    DASHBOARD: '/src/pages/dashboard.html',
+    LOGIN: '/src/pages/auth/login.html',
+    REGISTER: '/src/pages/auth/register.html',
+    HOME: '/'
 };
 
 /**

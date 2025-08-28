@@ -6,14 +6,14 @@ import {
   get,
   dbRef,
   child
-} from "/qnt42/src/assets/js/config.js";
+} from "/src/assets/js/config.js";
 
 // Import utility functions
 import {
   sanitizeInput,
   checkEmptyField,
   validateEmail,
-} from "/qnt42/src/assets/js/utils.js";
+} from "/src/assets/js/utils.js";
 
 // Get login button
 const loginButton = document.getElementById("login-btn");
@@ -26,7 +26,7 @@ loginButton.addEventListener("click", async (event) => {
   const email = sanitizeInput(document.getElementById("email").value);
   const password = sanitizeInput(document.getElementById("password").value);
 
-  let redirectTo = "/qnt42/src/pages/auth/login.html";
+  let redirectTo = "/src/pages/auth/login.html";
 
   // Run validations
   if (
@@ -47,7 +47,7 @@ loginButton.addEventListener("click", async (event) => {
 
     if (!snapshot.exists()) {
       sessionStorage.setItem("error", "Error: User data not found.");
-      window.location.href = "/qnt42/src/pages/auth/login.html";
+      window.location.href = "/src/pages/auth/login.html";
       return;
     }
 
@@ -62,7 +62,7 @@ loginButton.addEventListener("click", async (event) => {
     }));
 
     // Redirect to dashboard
-    window.location.href = "/qnt42/src/pages/dashboard.html";
+    window.location.href = "/src/pages/dashboard.html";
   }
   catch (error) {
     let userMessage = "Error: Login failed. ";
@@ -86,6 +86,6 @@ loginButton.addEventListener("click", async (event) => {
     }
 
     sessionStorage.setItem(notifType, userMessage);
-    window.location.href = "/qnt42/src/pages/auth/login.html";
+    window.location.href = "/src/pages/auth/login.html";
   };
 });
