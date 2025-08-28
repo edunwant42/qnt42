@@ -41,3 +41,20 @@ export function checkEmptyField(field, value, redirectPath) {
     }
     return true;
 }
+
+/**
+ * Validate the email format.
+ *
+ * @param {string} email The email address to validate.
+ * @param {string} redirectPath The path to redirect if validation fails.
+ * @return {boolean} True if valid, false otherwise (with redirect).
+ */
+export function validateEmail(email, redirectPath) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        sessionStorage.setItem("warning", "Warning: Invalid email format");
+        window.location.href = redirectPath;
+        return false;
+    }
+    return true;
+}
