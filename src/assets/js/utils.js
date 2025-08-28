@@ -201,3 +201,54 @@ function shuffleArray(array) {
     }
     return array;
 }
+
+/**
+ * Generate a random but secure password.
+ *
+ * The password consists of:
+ * - A random prefix of 10–12 characters including lowercase, uppercase, numbers, 
+ *   and 1–2 simple special characters (.,'*-_).
+ * - The first character is guaranteed not to be a special character.
+ * - At least one lowercase, one uppercase, one number, and one special character 
+ *   in the prefix.
+ * - A fixed suffix "@qnt42" for a personal/project touch. 
+ *
+ * @return {string} A secure password string of approximately 16–18 characters.
+ */
+function generateRandomPassword() {
+    const lowerCaseChars = "abcdefghijklmnopqrstuvwxyz";
+    const upperCaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const simpleSpecialChars = ".'*+^-|,_";
+    const suffix = "@qnt42";
+
+    const allChars = lowerCaseChars + upperCaseChars + numbers + simpleSpecialChars;
+
+    // Random prefix length between 10 and 12 to match total ~16-18 with suffix
+    const prefixLength = 10 + secureRandomInt(3); // 10, 11, or 12
+    const prefixChars = [];
+
+    // Ensure first character is NOT a special char
+    const firstCharPool = lowerCaseChars + upperCaseChars + numbers;
+    prefixChars.push(firstCharPool[secureRandomInt(firstCharPool.length)]);
+
+    // Ensure at least one lowercase, one uppercase, one number
+    prefixChars.push(lowerCaseChars[secureRandomInt(lowerCaseChars.length)]);
+    prefixChars.push(upperCaseChars[secureRandomInt(upperCaseChars.length)]);
+    prefixChars.push(numbers[secureRandomInt(numbers.length)]);
+
+    // Ensure at least one special character in the shuffled part
+    const mandatorySpecial = simpleSpecialChars[secureRandomInt(simpleSpecialChars.length)];
+    prefixChars.push(mandatorySpecial);
+
+    // Fill the rest of the prefix randomly
+    while (prefixChars.length < prefixLength) {
+        prefixChars.push(allChars[secureRandomInt(allChars.length)]);
+    }
+
+    // Shuffle all except the first character
+    const firstChar = prefixChars.shift();
+    const shuffled = shuffleArray(prefixChars).join("");
+
+    return firstChar + shuffled + suffix; // total length ~16-18
+}
