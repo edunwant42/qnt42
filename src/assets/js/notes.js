@@ -630,7 +630,7 @@ function applyStoredColorTheme() {
 function updateFaviconAndLogo(colorName) {
     const faviconLink = document.querySelector("link[rel='icon']");
     if (faviconLink) {
-        faviconLink.href = `assets/images/logo/favicon-${colorName}.ico`;
+        faviconLink.href = `/src/assets/images/logo/favicon-${colorName}.ico`;
     }
 
     const appLogo = document.getElementById("appLogo");
