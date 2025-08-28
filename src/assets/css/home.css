@@ -1,13 +1,5 @@
-/* ===============================
-   Font Import (Local Gugi Font)
-   =============================== */
-@font-face {
-    font-family: "Gugi";
-    src: url("/fonts/Gugi/Gugi-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
+
+@import url('https://fonts.googleapis.com/css2?family=Gugi&display=swap');
 
 /* ===============================
    Root Variables
