@@ -1,0 +1,179 @@
+
+/* ===============================
+   Font Import (Local Gugi Font)
+   =============================== */
+@font-face {
+    font-family: "Gugi";
+    src: url("../fonts/gugi/Gugi-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --dark: #506274;
+    --light: #ffffff;
+    --success: #51bd12;
+    --error: #E24D4C;
+    --warning: #E9BD0C;
+    --info: #3498DB;
+  }
+  
+  /* Toast container and shared styles */
+  .notifications {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+  .notifications.nvsdbr{
+    position: fixed;
+    top: 132px;
+    right: 20px;
+    z-index: 9999;
+  }
+  
+  .toast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    width: 450px;
+    padding: 16px;
+    margin-bottom: 10px;
+    background: var(--light);
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s forwards;
+    transition: transform 0.3s;
+    position: relative; /* Add position relative for the progress bar */
+    font-family: 'Gugi', sans-serif;
+    letter-spacing: 0.5px;
+    font-size: medium;
+    
+  }
+  
+  .toast.hide {
+    animation: slideOut 0.3s forwards;
+  }
+  
+  /* Progress bar styles */
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    width: 100%; 
+    animation: progressBar 5s linear forwards;
+  }
+  
+  /* Icon styles */
+  .toast .column i {
+    font-size: 1.25rem;
+    margin-right: 10px;
+  }
+  
+  /* Set default color for the description text */
+  .toast .column .description {
+    color: var(--dark);
+    margin-left: 5px;
+    margin-right: 7.5px;
+    line-height: 1.6;
+    text-align: center;
+  }
+  
+  /* Set color for the type text */
+  .toast .column .type {
+    margin-right: 5px;
+    font-weight: bold;
+  }
+  
+  /* New class for the colon */
+  .toast .column .colon {
+    color: var(--dark);
+  }
+  
+  /* Close button styles */
+  .toast .close-btn {
+    cursor: pointer;
+    padding-left: 10px;
+    font-size: 1.25rem;
+    color: #aeb0d7;
+    transition: color 0.2s;
+  }
+  
+  .toast .close-btn:hover {
+    color: var(--dark);
+  }
+  
+  /* Color schemes for different notification types */
+  .toast.success {
+    color: var(--success);
+  }
+  
+  .toast.error {
+    color: var(--error);
+  }
+  
+  .toast.warning {
+    color: var(--warning);
+  }
+  
+  .toast.info {
+    color: var(--info);
+  }
+  
+  /* Animation for showing and hiding the toast */
+  @keyframes slideIn {
+    0% {
+      transform: translateX(100%);
+    }
+    40% {
+      transform: translateX(-5%);
+    }
+    80% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-10px);
+    }
+  }
+  
+  @keyframes slideOut {
+    0% {
+      transform: translateX(-10px);
+    }
+    40% {
+      transform: translateX(0%);
+    }
+    80% {
+      transform: translateX(-5%);
+    }
+    100% {
+      transform: translateX(calc(100% + 20px));
+    }
+  }
+  
+  /* Progress bar animation */
+  @keyframes progressBar {
+    0% {
+        width: 100%; /* Start full width */
+    }
+    100% {
+        width: 0; /* Decrease to zero */
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media screen and (max-width: 530px) {
+    .toast {
+        width: 95%;
+        padding: 12px;
+    }
+    .toast .column span {
+        font-size: 0.9rem;
+    }
+  }
+  
