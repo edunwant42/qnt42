@@ -6,7 +6,7 @@ import {
   sanitizeInput,
   checkEmptyField,
   validateEmail,
-} from "/src/assets/js/utils.js";
+} from "/qnt42/src/assets/js/utils.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   const contactForm = document.getElementById("contact-form");
