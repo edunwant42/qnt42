@@ -33,10 +33,10 @@ registerButton.addEventListener("click", (event) => {
   let redirectTo = "/qnt42/src/pages/auth/register.html";
 
   // Run validations
-  if (checkEmptyField("Username", username, redirectTo) &&
-    checkEmptyField("Email", email, redirectTo) &&
-    checkEmptyField("Password", password, redirectTo) &&
-    validateEmail(email, redirectTo) &&
+  if (checkEmptyField("Username", username, "redirect", redirectTo) &&
+    checkEmptyField("Email", email, "redirect", redirectTo) &&
+    checkEmptyField("Password", password, "redirect", redirectTo) &&
+    validateEmail(email, "redirect", redirectTo) &&
     validatePassword(password)) {
 
     // If everything passes, i'll continue creating the user
