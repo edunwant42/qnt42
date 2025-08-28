@@ -252,3 +252,40 @@ function generateRandomPassword() {
 
     return firstChar + shuffled + suffix; // total length ~16-18
 }
+
+/**
+ * Attach a click event to a button to generate a secure password.
+ *
+ * When the button is clicked:
+ * - Generates a new password using `generateRandomPassword()`.
+ * - Sets the password field value to the generated password.
+ * - Makes the password field visible immediately.
+ * - Updates the toggle icon if a show/hide password button exists.
+ *
+ * @param {string} buttonId The ID of the button that triggers password generation.
+ * @param {string} passwordFieldId The ID of the input field to populate with the password.
+ */
+export function attachGeneratePasswordButton(buttonId, passwordFieldId) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+
+    button.addEventListener("click", e => {
+        e.preventDefault();
+        const passwordField = document.getElementById(passwordFieldId);
+        if (passwordField) {
+            // Generate a new secure password using the updated generator
+            const newPassword = generateRandomPassword();
+            passwordField.value = newPassword;
+
+            // Make the password visible immediately
+            passwordField.type = "text";
+
+            // Sync toggle icon if it exists
+            const toggleIcon = passwordField.parentElement.querySelector(".toggle-password i");
+            if (toggleIcon) {
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+    });
+}
