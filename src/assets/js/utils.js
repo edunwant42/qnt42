@@ -184,3 +184,20 @@ function secureRandomInt(max) {
     } while (r >= threshold);
     return r % max;
 }
+
+/**
+ * Shuffle an array in place using the Fisher–Yates (Knuth) algorithm.
+ *
+ * This function ensures each permutation of the array is equally likely.
+ * It uses `secureRandomInt` for cryptographically secure randomness.
+ *
+ * @param {Array} array The array to shuffle.
+ * @return {Array} The same array, shuffled in place.
+ */
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = secureRandomInt(i + 1);
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
