@@ -58,3 +58,48 @@ export function validateEmail(email, redirectPath) {
     }
     return true;
 }
+
+/**
+ * Validate the security of a password.
+ *
+ * Checks for minimum length, uppercase, lowercase, numeric,
+ * and special character requirements.
+ *
+ * @param {string} password The password to validate.
+ * @return {boolean} True if valid, false otherwise (with redirect).
+ */
+export function validatePassword(password) {
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*]/.test(password);
+
+    if (password.length < minLength) {
+        sessionStorage.setItem("warning", `Warning: Password must be at least ${minLength} characters long.`);
+        window.location.href = "/src/pages/auth/register";
+        return false;
+    }
+    if (!hasUppercase) {
+        sessionStorage.setItem("warning", "Warning: Password must include at least one uppercase letter.");
+        window.location.href = "/src/pages/auth/register";
+        return false;
+    }
+    if (!hasLowercase) {
+        sessionStorage.setItem("warning", "Warning: Password must include at least one lowercase letter.");
+        window.location.href = "/src/pages/auth/register";
+        return false;
+    }
+    if (!hasNumber) {
+        sessionStorage.setItem("warning", "Warning: Password must include at least one number.");
+        window.location.href = "/src/pages/auth/register";
+        return false;
+    }
+    if (!hasSpecialChar) {
+        sessionStorage.setItem("warning", "Warning: Password must include at least one special character.");
+        window.location.href = "/src/pages/auth/register";
+        return false;
+    }
+
+    return true;
+}
