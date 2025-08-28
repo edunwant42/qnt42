@@ -18,7 +18,7 @@ const ROUTES = {
     DASHBOARD: '/qnt42/src/pages/dashboard.html',
     LOGIN: '/qnt42/src/pages/auth/login.html',
     REGISTER: '/qnt42/src/pages/auth/register.html',
-    HOME: '/'
+    HOME: '/qnt42/'
 };
 
 /**
