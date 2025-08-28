@@ -26,34 +26,48 @@ export function sanitizeInput(data) {
 }
 
 /**
- * Check if a required field is empty.
+ * Validate the email format.
  *
- * @param {string} field The field name.
- * @param {string} value The value to check.
- * @param {string} redirectPath The path to redirect if validation fails.
- * @return {boolean} True if valid, false otherwise (with redirect).
+ * @param {string} email The email address to validate.
+ * @param {string} action The action to take if validation fails ("redirect" or "reload").
+ * @param {string} path The path to redirect if action = "redirect".
+ * @return {boolean} True if valid, false otherwise.
  */
-export function checkEmptyField(field, value, redirectPath) {
-    if (!value || value.trim() === "") {
-        sessionStorage.setItem("warning", `Warning: ${field} is required`);
-        window.location.href = redirectPath;
+export function validateEmail(email, action = "reload", path) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        sessionStorage.setItem("warning", "Warning: Invalid email format");
+
+        if (action === "reload") {
+            window.location.reload();
+        } else {
+            window.location.href = path;
+        }
+
         return false;
     }
     return true;
 }
 
 /**
- * Validate the email format.
+ * Check if a required field is empty.
  *
- * @param {string} email The email address to validate.
- * @param {string} redirectPath The path to redirect if validation fails.
- * @return {boolean} True if valid, false otherwise (with redirect).
+ * @param {string} field The field name.
+ * @param {string} value The value to check.
+ * @param {string} action The action to take if validation fails ("redirect" or "reload").
+ * @param {string} path The path to redirect if action = "redirect".
+ * @return {boolean} True if valid, false otherwise.
  */
-export function validateEmail(email, redirectPath) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        sessionStorage.setItem("warning", "Warning: Invalid email format");
-        window.location.href = redirectPath;
+export function checkEmptyField(field, value, action = "reload", path) {
+    if (!value || value.trim() === "") {
+        sessionStorage.setItem("warning", `Warning: ${field} is required`);
+
+        if (action === "reload") {
+            window.location.reload();
+        } else {
+            window.location.href = path;
+        }
+
         return false;
     }
     return true;
