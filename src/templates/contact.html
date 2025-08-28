@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .email-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            width: 650px;
+            max-width: 100%;
+            margin: 20px auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eaeef2;
+        }
+
+        .header img {
+            width: 92px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2D3748;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-top: 0;
+        }
+
+        .txt {
+            font-size: 16px;
+            color: #4A5568;
+            line-height: 1.6;
+            margin: 25px 0;
+        }
+
+        .message-box {
+            background-color: #F8FAFC;
+            padding: 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-field {
+            margin-bottom: 12px;
+            display: flex;
+        }
+
+        .field-label {
+            font-weight: 600;
+            color: #4299E1;
+            min-width: 80px;
+        }
+
+        .message-content {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #E2E8F0;
+        }
+
+        .note {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.6;
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #F8FAFC;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .footer {
+            font-size: 14px;
+            color: #718096;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #eaeef2;
+        }
+
+        .footer-link {
+            color: #4299E1;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://edunwant42.github.io/qnt42/src/assets/images/logo/note-logo-blue.webp" alt="QNT42 Logo" />
+            <h1 class="title">New Contact Form Submission</h1>
+            <p class="subtitle">QNT42 Support Portal</p>
+        </div>
+        
+        <div class="txt">
+            Hello <strong>ed42</strong>, you've received a new inquiry through the QNT42 contact form. The details are provided below:
+        </div>
+        
+        <div class="message-box">
+            <div class="message-field">
+                <span class="field-label">From:</span>
+                <span>{{from_name}}</span>
+            </div>
+            <div class="message-field">
+                <span class="field-label">Email:</span>
+                <span><a href="mailto:{{from_email}}" style="color: #4299E1; text-decoration: none;">{{from_email}}</a></span>
+            </div>
+            <div class="message-field">
+                <span class="field-label">Submitted:</span>
+                <span>{{sent_time}}</span>
+            </div>
+            
+            <div class="message-field">
+                <span class="field-label">Message:</span>
+            </div>
+            <div class="message-content">
+                {{message}}
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>Please note:</strong> This is an automated notification. Please respond directly to the sender's email address rather than replying to this message.
+        </div>
+        
+        <div class="footer">
+            Best regards,<br />
+            <strong><span class="footer-link">QNT42 Customer Support Team</span></strong>
+        </div>
+    </div>
+</body>
+</html>
