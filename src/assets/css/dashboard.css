@@ -1,3 +1,15 @@
+
+/* ===============================
+   Font Import (Local Gugi Font)
+   =============================== */
+@font-face {
+    font-family: "Gugi";
+    src: url("../fonts/gugi/Gugi-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
     margin: 0;
     padding: 0;
