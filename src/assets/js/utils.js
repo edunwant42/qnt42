@@ -77,27 +77,27 @@ export function validatePassword(password) {
 
     if (password.length < minLength) {
         sessionStorage.setItem("warning", `Warning: Password must be at least ${minLength} characters long.`);
-        window.location.href = "src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasUppercase) {
         sessionStorage.setItem("warning", "Warning: Password must include at least one uppercase letter.");
-        window.location.href = "src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasLowercase) {
         sessionStorage.setItem("warning", "Warning: Password must include at least one lowercase letter.");
-        window.location.href = "src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasNumber) {
         sessionStorage.setItem("warning", "Warning: Password must include at least one number.");
-        window.location.href = "src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasSpecialChar) {
         sessionStorage.setItem("warning", "Warning: Password must include at least one special character.");
-        window.location.href = "src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/register";
         return false;
     }
 

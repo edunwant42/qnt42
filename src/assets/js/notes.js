@@ -318,7 +318,7 @@ function renderNotes(filteredNotes) {
 
         container.innerHTML = ` 
             <div class="empty-state"> 
-                <img class="no-notes-image" src="src/assets/images/no-item.webp" alt="No Notes" /> 
+                <img class="no-notes-image" src="/qnt42/src/assets/images/no-item.webp" alt="No Notes" /> 
                 <p>${currentFilter === "archived" ?
                 "<h1>No archived notes found.</h1><br> Create a new note, or archive some existing notes!" :
                 "<h1>No notes found.</h1><br> Create your first note to get started!"
@@ -630,12 +630,12 @@ function applyStoredColorTheme() {
 function updateFaviconAndLogo(colorName) {
     const faviconLink = document.querySelector("link[rel='icon']");
     if (faviconLink) {
-        faviconLink.href = `src/assets/images/logo/favicon-${colorName}.ico`;
+        faviconLink.href = `/qnt42/src/assets/images/logo/favicon-${colorName}.ico`;
     }
 
     const appLogo = document.getElementById("appLogo");
     if (appLogo) {
-        appLogo.src = `src/assets/images/logo/note-logo-${colorName}.webp`;
+        appLogo.src = `/qnt42/src/assets/images/logo/note-logo-${colorName}.webp`;
     }
 }
 

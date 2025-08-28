@@ -1,12 +1,10 @@
-
 import {
     auth,
     onAuthStateChanged,
     dbRef,
     get,
     child
-} from 'src/assets/js/config.js';
-
+} from '/qnt42/src/assets/js/config.js';
 
 // Page types for authentication control
 const PAGE_TYPES = {
@@ -17,10 +15,10 @@ const PAGE_TYPES = {
 
 // Canonical routes used across the app
 const ROUTES = {
-    DASHBOARD: 'src/pages/dashboard.html',
-    LOGIN: 'src/pages/auth/login.html',
-    REGISTER: 'src/pages/auth/register.html',
-    HOME: '/'
+    DASHBOARD: '/qnt42/src/pages/dashboard.html',
+    LOGIN: '/qnt42/src/pages/auth/login.html',
+    REGISTER: '/qnt42/src/pages/auth/register.html',
+    HOME: '/qnt42/'
 };
 
 /**
@@ -39,8 +37,8 @@ function getCurrentPageType() {
     if (
         path.includes('/auth/login.html') ||
         path.includes('/auth/register.html') ||
-        path.includes('login.html') && path.includes('auth') ||
-        path.includes('register.html') && path.includes('auth') ||
+        (path.includes('login.html') && path.includes('auth')) ||
+        (path.includes('register.html') && path.includes('auth')) ||
         path === '/' ||
         path.includes('index.html')
     ) {
@@ -56,7 +54,6 @@ function getCurrentPageType() {
  */
 function redirectTo(target) {
     if (!target) return;
-    // Accept both named keys or direct paths
     const key = typeof target === 'string' && ROUTES[target.toUpperCase()];
     window.location.href = key || target;
 }
@@ -72,24 +69,21 @@ function initAuthGuard() {
     document.body.classList.add('loading');
 
     onAuthStateChanged(auth, async (user) => {
-        // If a registration flow is in progress elsewhere, or a logout is in progress, skip guard
+        // Skip guard if registration or logout in progress
         if (window.isRegistering || window.isLoggingOut) {
             document.body.classList.remove('loading');
-            // clear the logout flag so normal guard resumes on next state change
             if (window.isLoggingOut) window.isLoggingOut = false;
             return;
         }
 
         switch (pageType) {
             case PAGE_TYPES.AUTH_ONLY:
-                // Redirect to login if a protected page is accessed by a guest
                 if (!user) {
                     sessionStorage.setItem("info", "Info: You must be logged in to access the desired page.");
                     console.log('Redirecting unauthenticated user to login.');
                     redirectTo(ROUTES.LOGIN);
                     return;
                 } else {
-                    // Rehydrate user-info if missing
                     const existing = localStorage.getItem("user-info");
                     if (!existing) {
                         try {
@@ -107,17 +101,17 @@ function initAuthGuard() {
                     }
                 }
                 break;
+
             case PAGE_TYPES.GUEST_ONLY:
-                // Redirect to dashboard if a guest page is accessed by an authenticated user
                 if (user) {
                     console.log('Redirecting authenticated user to dashboard.');
                     redirectTo(ROUTES.DASHBOARD);
                     return;
                 }
                 break;
+
             case PAGE_TYPES.PUBLIC:
             default:
-                // No action for public pages
                 break;
         }
 

@@ -1,5 +1,5 @@
-import { auth, signOut } from "src/assets/js/config.js";
-import { clearOutNotifs, startInactivityTimer } from "src/assets/js/utils.js";
+import { auth, signOut } from "/qnt42/src/assets/js/config.js";
+import { clearOutNotifs, startInactivityTimer } from "/qnt42/src/assets/js/utils.js";
 
 /**
  * Global logout handler used by onclick="handleLogout()" in Dashboard page.
@@ -28,7 +28,7 @@ async function handleLogout(inactivity = false) {
         }
 
         // Redirect to home page
-        window.location.href = "/";
+        window.location.href = "/qnt42/";
     } catch (err) {
         console.error("Logout failed", err);
         alert("Logout failed. Please try again.");
