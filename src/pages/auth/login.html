@@ -8,10 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/src/assets/images/logo/favicon-blue.ico" />
     <link rel="stylesheet" href="/src/assets/css/auth.css" />
+    <link rel="stylesheet" href="/src/assets/css/notifier.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="/src/assets/js/auth-guard.js" defer></script>
+    <script src="/src/assets/js/notifier.js" defer></script>
 </head>
 
 <body>
+    <ul class="notifications"></ul>
     <div class="auth-container">
         <!-- Left Section - Welcome -->
         <div class="welcome-section">
@@ -24,7 +28,7 @@
                 <h1>New here?</h1>
                 <p>Join our community and unlock the full potential of our platform.
                     Sign up now to enjoy exclusive features and stay updated!</p>
-                <a href="/auth/register" class="btn btn-outline">SIGN UP</a>
+                <a href="/src/pages/auth/register" class="btn btn-outline">SIGN UP</a>
 
                 <div class="welcome-image">
                     <img src="/src/assets/images/sign up.webp" alt="Welcome Illustration">
@@ -40,13 +44,13 @@
                 <form class="form" autocomplete="off">
                     <div class="input-group">
                         <i class="fas fa-envelope"></i>
-                        <input type="text" placeholder="Email" name="email" autocomplete="off" required>
+                        <input type="text" placeholder="Email" id="email" name="email" autocomplete="off">
                     </div>
 
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" autocomplete="new-password" name="password"
-                            data-form-type="password" required>
+                        <input type="password" placeholder="Password" autocomplete="new-password" id="password"
+                            name="password" data-form-type="password">
                         <button type="button" class="toggle-password">
                             <i class="fas fa-eye-slash"></i>
                         </button>
@@ -57,16 +61,21 @@
                         <span>Return <a href="/" class="link-primary">Home</a> ?</span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">SIGN IN</button>
+                    <button type="submit" class="btn-primary" id="login-btn">SIGN IN</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Load scripts in the correct order -->
-    <script src="/src/assets/js/auth-ui.js"></script>
-    <script type="module" src="/src/assets/js/auth-guard.js"></script>
     <script type="module" src="/src/services/login.js"></script>
+    <script type="module">
+        import { attachPasswordToggles } from "/src/assets/js/utils.js";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            attachPasswordToggles();
+        });
+    </script>
+
 </body>
 
 </html>
