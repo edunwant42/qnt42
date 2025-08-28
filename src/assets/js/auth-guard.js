@@ -4,7 +4,7 @@ import {
     dbRef,
     get,
     child
-} from '/src/assets/js/config.js';
+} from '/qnt42/src/assets/js/config.js';
 
 // Page types for authentication control
 const PAGE_TYPES = {
@@ -15,9 +15,9 @@ const PAGE_TYPES = {
 
 // Canonical routes used across the app
 const ROUTES = {
-    DASHBOARD: '/src/pages/dashboard.html',
-    LOGIN: '/src/pages/auth/login.html',
-    REGISTER: '/src/pages/auth/register.html',
+    DASHBOARD: '/qnt42/src/pages/dashboard.html',
+    LOGIN: '/qnt42/src/pages/auth/login.html',
+    REGISTER: '/qnt42/src/pages/auth/register.html',
     HOME: '/'
 };
 
@@ -29,7 +29,7 @@ function getCurrentPageType() {
     const path = window.location.pathname.toLowerCase();
 
     // Protected dashboard pages
-    if (path.includes('dashboard.html') || path.includes('/src/pages/dashboard.html')) {
+    if (path.includes('dashboard.html') || path.includes('/qnt42/src/pages/dashboard.html')) {
         return PAGE_TYPES.AUTH_ONLY;
     }
 
