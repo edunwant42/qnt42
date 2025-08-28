@@ -103,3 +103,16 @@ export function validatePassword(password) {
 
     return true;
 }
+
+/**
+ * Generate a radom secure 256-bit secret encryption key (Base64 encoded).
+ *
+ * @return {string} A unique secret key for encryption.
+ */
+export function generateSecretKey() {
+    // Generate 32 random bytes (256 bits)
+    const keyBytes = window.crypto.getRandomValues(new Uint8Array(32));
+
+    // Convert bytes to Base64 string for storage
+    return btoa(String.fromCharCode(...keyBytes));
+}
