@@ -75,10 +75,11 @@
     </div>
 
     <script type="module">
-        import { attachGeneratePasswordButton } from "/qnt42/src/assets/js/utils.js";
+        import { attachGeneratePasswordButton, attachPasswordToggles } from "/qnt42/src/assets/js/utils.js";
 
         document.addEventListener("DOMContentLoaded", () => {
             attachGeneratePasswordButton("generatePasswordBtn", "password", 16);
+            attachPasswordToggles();
         });
     </script>
 </body>
