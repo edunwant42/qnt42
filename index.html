@@ -15,7 +15,7 @@
   <script src="/qnt42/src/assets/js/home.js" defer></script>
   <script type="module" src="/qnt42/src/assets/js/auth-guard.js" defer></script>
   <style>
-    .notifications{
+    .notifications {
       top: 85px;
     }
   </style>
@@ -39,8 +39,8 @@
         <div class="nav-indicator"></div>
       </nav>
       <div class="auth-buttons">
-        <a href="/qnt42/src/pages/auth/login.html" class="btn secondary">Login</a>
-        <a href="/qnt42/src/pages/auth/register.html" class="btn primary">Sign Up</a>
+        <a href="/qnt42/src/pages/auth/authenticate.html?action=login" class="btn secondary">Login</a>
+        <a href="/qnt42/src/pages/auth/authenticate.html?action=register" class="btn primary">Sign Up</a>
       </div>
     </div>
   </header>
@@ -202,7 +202,16 @@
       </p>
     </div>
   </footer>
-  <script type="module" src="/qnt42/src/assets/js/mailer.js"></script>
+  <script type="module">
+    import { initContactForm } from "/qnt42/src/assets/js/mailer.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initContactForm({
+        formId: "contact-form",
+        submitBtnId: "submit-btn",
+      });
+    });
+  </script>
 </body>
 
 </html>
