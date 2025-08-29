@@ -1,79 +1,136 @@
-// Import Firebase configuration, auth instance, and functions from config.js
 import {
   auth,
   db,
   createUserWithEmailAndPassword,
-  signOut,
   set,
   ref,
 } from "/qnt42/src/assets/js/config.js";
 
-// Import utility functions
 import {
   sanitizeInput,
   checkEmptyField,
   validateEmail,
+  validateTerms,
   validatePassword,
-  generateSecretKey
+  generateSecretKey,
+  generateOTP,
 } from "/qnt42/src/assets/js/utils.js";
 
+import { sendAccountEmail } from "/qnt42/src/assets/js/mailer.js";
 
-// Get register button
 const registerButton = document.getElementById("register-btn");
 
-// Add click event listener
-registerButton.addEventListener("click", (event) => {
+registerButton.addEventListener("click", async (event) => {
   event.preventDefault();
 
-  // Capture and sanitize input values
+  // Store original button content
+  const originalText = registerButton.innerHTML;
+  const originalDisabled = registerButton.disabled;
+
+  // Show loading state
+  registerButton.disabled = true;
+  registerButton.innerHTML =
+    '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing...';
+
   const username = sanitizeInput(document.getElementById("username").value);
-  const email = sanitizeInput(document.getElementById("email").value);
-  const password = sanitizeInput(document.getElementById("password").value);
+  const email = sanitizeInput(document.getElementById("sign-up_email").value);
+  const password = sanitizeInput(
+    document.getElementById("sign-up_password").value
+  );
 
-  let redirectTo = "/qnt42/src/pages/auth/register.html";
+  const redirectTo = "/qnt42/src/pages/auth/authenticate.html?action=register";
 
-  // Run validations
-  if (checkEmptyField("Username", username, "redirect", redirectTo) &&
+  if (
+    checkEmptyField("Username", username, "redirect", redirectTo) &&
     checkEmptyField("Email", email, "redirect", redirectTo) &&
     checkEmptyField("Password", password, "redirect", redirectTo) &&
     validateEmail(email, "redirect", redirectTo) &&
-    validatePassword(password)) {
+    validatePassword(password) &&
+    validateTerms()
+  ) {
+    try {
+      // Clear any previous email errors
+      localStorage.removeItem("emailError");
 
-    // If everything passes, i'll continue creating the user
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Generate a unique secret key for this user
-        const secretKey = generateSecretKey();
-        set(ref(db, 'users/' + userCredential.user.uid), {
-          username: username,
-          email: email,
-          secretKey: secretKey
-        });
-        sessionStorage.setItem("success", "Success: Registration successful!");
-        window.location.href = "/qnt42/src/pages/auth/register.html";
-      }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-        // Handle specific errors
-        let userMessage = "Error: Registration failed. ";
-        let notifType = "error";
+      const uid = userCredential.user.uid;
+      const secretKey = generateSecretKey();
+      const otp = generateOTP();
+      const otpCreatedAt = Date.now();
 
-        switch (errorCode) {
-          case 'auth/email-already-in-use':
-            userMessage += "Error: This email is already registered.";
-            notifType = "error";
-            break;
-          case 'auth/network-request-failed':
-            userMessage += "Error: Network error. Please check your connection.";
-            notifType = "error";
-            break;
-          default:
-            userMessage = "Error: Unknown error occurred. Please try again later.";
-        }
-
-        sessionStorage.setItem(notifType, userMessage);
-        window.location.href = "/qnt42/src/pages/auth/register.html";
+      await set(ref(db, `users/${uid}`), {
+        username,
+        email,
+        secretKey,
+        otp,
+        otpCreatedAt,
+        verified: false,
+        createdAt: new Date().toISOString(),
       });
+
+      // Send verification email using the new system
+      // Fixed: Now passing username as the third parameter
+      const emailSent = await sendAccountEmail(
+        "verifyAccount",
+        email,
+        username,
+        {
+          otp: otp,
+          uid: uid,
+        }
+      );
+
+      if (emailSent) {
+        sessionStorage.setItem(
+          "info",
+          "Info: Registration successful! A verification OTP has been sent to your email. The code will expire in 10 minutes."
+        );
+        window.location.href =
+          "/qnt42/src/pages/auth/secure.html?action=verify&uid=" + uid;
+      } else {
+        // Store email error details in localStorage for debugging
+        const emailError = localStorage.getItem("emailError");
+        throw new Error(`Failed to send verification email. ${emailError}`);
+      }
+    } catch (error) {
+      console.error("Registration error details:", error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+
+      let userMessage = "Error: Registration failed. ";
+      let notifType = "error";
+
+      switch (errorCode) {
+        case "auth/email-already-in-use":
+          userMessage += "This email is already registered.";
+          break;
+        case "auth/network-request-failed":
+          userMessage += "Network error. Please check your connection.";
+          break;
+        case "auth/invalid-email":
+          userMessage += "The email address is invalid.";
+          break;
+        case "auth/operation-not-allowed":
+          userMessage += "Email/password accounts are not enabled.";
+          break;
+        case "auth/weak-password":
+          userMessage += "The password is too weak.";
+          break;
+        default:
+          userMessage += `Error: ${errorMessage}`;
+      }
+
+      sessionStorage.setItem(notifType, userMessage);
+      window.location.href = redirectTo;
+    }
+  } else {
+    // Reset button if validation fails
+    registerButton.disabled = originalDisabled;
+    registerButton.innerHTML = originalText;
   }
 });
