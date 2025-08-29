@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="/qnt42/src/assets/images/logo/favicon-blue.ico" type="image/x-icon" sizes="128x128" />
+    <link rel="stylesheet" href="/qnt42/src/assets/css/forms.css" />
+    <link rel="stylesheet" href="/qnt42/src/assets/css/notifier.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script type="module" src="/qnt42/src/assets/js/auth-guard.js" defer></script>
+    <script src="/qnt42/src/assets/js/notifier.js" defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <title>QNT42 - Recover</title>
+</head>
+
+<body>
+    <ul class="notifications"></ul>
+    <div class="container" id="container">
+        <div class="forms-container">
+            <div class="forgot-request">
+                <!-- Forgot Password Form -->
+                <form class="frgt-pswrd-form" id="forgotPasswordForm" autocomplete="off">
+                    <h2 class="title-long">Forgot your Account Password?</h2>
+                    <!-- Email Field -->
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="forgot-email" id="forgot-email" placeholder="Email" />
+                    </div>
+                    <button type="submit" class="btn solid">Submit</button>
+                    <p class="social-text">
+                        Return to
+                        <a href="/qnt42/src/pages/auth/authenticate?action=login">Login Page</a>
+                    </p>
+                </form>
+                <!-- Request Verification Token Form -->
+                <form class="rqst-tkn-form" id="requestTokenForm" autocomplete="off">
+                    <h2 class="title-long">Request Account Verification</h2>
+                    <!-- Email Field -->
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="recover-email" id="recover-email" placeholder="Email" />
+                    </div>
+                    <button type="submit" class="btn solid">Submit</button>
+                    <p class="social-text">
+                        Return to
+                        <a href="/qnt42/src/pages/auth/secure?action=verify">Verify Account</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div class="panels-container">
+            <!-- Left Panel -->
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>Didn't Receive Your Token, or it expired?</h3>
+                    <p>
+                        If you missed the verification step or didn't receive your token,
+                        you can request a new one.
+                    </p>
+                    <button class="btn transparent" id="request-btn">
+                        Request Token
+                    </button>
+                </div>
+                <img src="/qnt42/src/assets/images/recover otp.webp" class="image" alt="Request Verification Illustration" />
+            </div>
+
+            <!-- Right Panel -->
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>Forgot Password?</h3>
+                    <p>
+                        Don't worry! Use the form to reset it and regain access to your
+                        account.
+                    </p>
+                    <button class="btn transparent" id="forgot-btn">Forgot Pass</button>
+                </div>
+                <img src="/qnt42/src/assets/images/forgot pass.webp" class="image" alt="Forgot Password Illustration" />
+            </div>
+        </div>
+    </div>
+
+    <script src="/qnt42/src/assets/js/formSwitcher.js"></script>
+    <script type="module" src="/qnt42/src/services/forgot.js"></script>
+    <script type="module" src="/qnt42/src/services/recover.js"></script>
+</body>
+
+</html>
