@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/qnt42/src/assets/images/logo/favicon-blue.ico" type="image/x-icon" sizes="128x128">
+    <link rel="stylesheet" href="/qnt42/src/assets/css/forms.css" />
+    <link rel="stylesheet" href="/qnt42/src/assets/css/notifier.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="/qnt42/src/assets/js/auth-guard.js" defer></script>
+    <script src="/qnt42/src/assets/js/notifier.js" defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <title>QNT42 - Secure Account</title>
+    <style>
+        /* Additional styles for OTP inputs */
+        .otp-section {
+            margin: 20px 0;
+        }
+        
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .otp-input {
+            width: 40px;
+            height: 45px;
+            text-align: center;
+            font-size: 22px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .otp-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 119, 235, 0.5);
+        }
+        
+        .social-links {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .request-otptoken-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .request-otptoken-link:hover {
+            text-decoration: underline;
+        }
+        
+        .countdown {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .expired {
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="notifications"></ul>
+    <div class="container" id="container" data-page="secure">
+        <div class="forms-container">
+            <div class="verify-reset">
+                <!-- Verify Account Form -->
+                <form class="vrfy-accnt-form" id="vrfyAccountForm" autocomplete="off">
+                    <h2 class="title-long">
+                        Verify Your Account
+                    </h2>
+                    <!-- OTP Section -->
+                    <div class="otp-section">
+                        <div class="otp-container">
+                            <input type="text" id="otp1" name="otp1" class="otp-input" maxlength="1" autocomplete="off" />
+                            <input type="text" id="otp2" name="otp2" class="otp-input" maxlength="1" autocomplete="off" />
+                            <input type="text" id="otp3" name="otp3" class="otp-input" maxlength="1" autocomplete="off" />
+                            <input type="text" id="otp4" name="otp4" class="otp-input" maxlength="1" autocomplete="off" />
+                            <input type="text" id="otp5" name="otp5" class="otp-input" maxlength="1" autocomplete="off" />
+                            <input type="text" id="otp6" name="otp6" class="otp-input" maxlength="1" autocomplete="off" />
+                        </div>
+                    </div>
+                    <!-- request new otp token link -->
+                    <div class="social-links">
+                        <a href="/qnt42/src/pages/auth/recover.html?action=request" class="request-otptoken-link">
+                            Request a new OTP
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn solid">
+                        Verify Account
+                    </button>
+                </form>
+                <!-- Reset Password Form -->
+                <form class="rst-pswrd-form" id="rstPswrdForm" autocomplete="off">
+                    <h2 class="title-long">
+                        Reset Password
+                    </h2>
+                    <!-- New Password Field -->
+                    <div class="input-field">
+                        <i class="ri-lock-2-fill"></i>
+                        <input type="password" name="newpassword" id="newPasswordReset" placeholder="New Password" aria-label="Enter new password" autocomplete="off" />
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </div>
+                    <!-- Confirm Password Field -->
+                    <div class="input-field">
+                        <i class="ri-lock-2-fill"></i>
+                        <input type="password" name="cnfrmpassword" id="confirmPasswordReset" placeholder="Confirm Password" aria-label="Confirm your new password" autocomplete="off" />
+                        <i class="fa-solid fa-eye-slash" data-target="confirmPasswordReset"></i>
+                    </div>
+                    <div class="form-links">
+                        <a id="generatePasswordBtn" class="link-primary generate-password"> <i class="fas fa-gear"></i> Generate Password</a>
+                        <a href="/" class="link-primary">Return to <span style="color: var(--primary-color);">logn</span> ?</a>
+                    </div>
+                    <button type="submit" class="btn solid">
+                        Reset Password
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- Panels -->
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>
+                        Need to reset your password?
+                    </h3>
+                    <p>
+                        Enter your new password and confirm it to regain access to your account.
+                    </p>
+                    <button class="btn transparent" id="reset-btn">
+                        Reset Password
+                    </button>
+                </div>
+                <img src="/qnt42/src/assets/images/reset pass.webp" class="image" alt="Reset Password Illustration" />
+            </div>
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>
+                        Need to verify your account?
+                    </h3>
+                    <p>
+                        Enter the verification code sent to your email to verify your account.
+                    </p>
+                    <button class="btn transparent" id="verify-btn">
+                        Verify Account
+                    </button>
+                </div>
+                <img src="/qnt42/src/assets/images/verify.webp" class="image" alt="Account Verification Illustration" />
+            </div>
+        </div>
+    </div>
+
+    <script src="/qnt42/src/assets/js/formSwitcher.js"></script>
+    <script type="module" src="/qnt42/src/services/reset.js"></script>
+    <script type="module" src="/qnt42/src/services/verify.js"></script>
+</body>
+
+</html>
