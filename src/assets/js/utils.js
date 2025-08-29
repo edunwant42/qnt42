@@ -1,3 +1,4 @@
+import { mailConfig } from "./config.js";
 
 /**
  * Validate and sanitize input data.
@@ -50,6 +51,24 @@ export function validateEmail(email, action = "reload", path) {
 }
 
 /**
+ *  Validate if the terms and policies are accepted.
+ *
+ * @return {boolean} True if accepted, false otherwise.
+ */
+export function validateTerms() {
+    const termsCheckbox = document.getElementById("terms");
+    if (!termsCheckbox.checked) {
+        sessionStorage.setItem(
+            "warning",
+            "Warning: You must agree to the Terms of Use and Privacy Policy."
+        );
+        window.location.reload();
+        return false;
+    }
+    return true;
+}
+
+/**
  * Check if a required field is empty.
  *
  * @param {string} field The field name.
@@ -90,28 +109,43 @@ export function validatePassword(password) {
     const hasSpecialChar = /[!@#$%^&*]/.test(password);
 
     if (password.length < minLength) {
-        sessionStorage.setItem("warning", `Warning: Password must be at least ${minLength} characters long.`);
-        window.location.href = "/qnt42/src/pages/auth/register";
+        sessionStorage.setItem(
+            "warning",
+            `Warning: Password must be at least ${minLength} characters long.`
+        );
+        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasUppercase) {
-        sessionStorage.setItem("warning", "Warning: Password must include at least one uppercase letter.");
-        window.location.href = "/qnt42/src/pages/auth/register";
+        sessionStorage.setItem(
+            "warning",
+            "Warning: Password must include at least one uppercase letter."
+        );
+        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasLowercase) {
-        sessionStorage.setItem("warning", "Warning: Password must include at least one lowercase letter.");
-        window.location.href = "/qnt42/src/pages/auth/register";
+        sessionStorage.setItem(
+            "warning",
+            "Warning: Password must include at least one lowercase letter."
+        );
+        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasNumber) {
-        sessionStorage.setItem("warning", "Warning: Password must include at least one number.");
-        window.location.href = "/qnt42/src/pages/auth/register";
+        sessionStorage.setItem(
+            "warning",
+            "Warning: Password must include at least one number."
+        );
+        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
         return false;
     }
     if (!hasSpecialChar) {
-        sessionStorage.setItem("warning", "Warning: Password must include at least one special character.");
-        window.location.href = "/qnt42/src/pages/auth/register";
+        sessionStorage.setItem(
+            "warning",
+            "Warning: Password must include at least one special character."
+        );
+        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
         return false;
     }
 
@@ -132,18 +166,35 @@ export function generateSecretKey() {
 }
 
 /**
+ * Generate random OTP Token
+ *
+ * @return {string} A unique OTP token.
+ */
+export function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+}
+
+/**
  * Removes notification messages (info, success, error, warning) stored in sessionStorage.
- * 
- * @param {string} [type] - Optional. The specific notification type to clear. 
+ *
+ * @param {string} [type] - Optional. The specific notification type to clear.
  *                         Valid values: "info", "success", "error", "warning".
  *                         If omitted or invalid, all notification types will be cleared.
  */
 export function clearOutNotifs(type) {
     switch (type) {
-        case "info": sessionStorage.removeItem("info"); break;
-        case "success": sessionStorage.removeItem("success"); break;
-        case "error": sessionStorage.removeItem("error"); break;
-        case "warning": sessionStorage.removeItem("warning"); break;
+        case "info":
+            sessionStorage.removeItem("info");
+            break;
+        case "success":
+            sessionStorage.removeItem("success");
+            break;
+        case "error":
+            sessionStorage.removeItem("error");
+            break;
+        case "warning":
+            sessionStorage.removeItem("warning");
+            break;
         default:
             sessionStorage.removeItem("info");
             sessionStorage.removeItem("success");
@@ -157,10 +208,12 @@ export function clearOutNotifs(type) {
  *
  * @param {string} toggleButtonSelector - CSS selector for the toggle buttons (e.g., ".toggle-password").
  */
-export function attachPasswordToggles(toggleButtonSelector = ".toggle-password") {
+export function attachPasswordToggles(
+    toggleButtonSelector = ".toggle-password"
+) {
     const toggleButtons = document.querySelectorAll(toggleButtonSelector);
 
-    toggleButtons.forEach(button => {
+    toggleButtons.forEach((button) => {
         button.addEventListener("click", () => {
             const input = button.previousElementSibling; // The password input
             if (!input) return;
@@ -220,12 +273,12 @@ function shuffleArray(array) {
  * Generate a random but secure password.
  *
  * The password consists of:
- * - A random prefix of 10–12 characters including lowercase, uppercase, numbers, 
+ * - A random prefix of 10–12 characters including lowercase, uppercase, numbers,
  *   and 1–2 simple special characters (.,'*-_).
  * - The first character is guaranteed not to be a special character.
- * - At least one lowercase, one uppercase, one number, and one special character 
+ * - At least one lowercase, one uppercase, one number, and one special character
  *   in the prefix.
- * - A fixed suffix "@qnt42" for a personal/project touch. 
+ * - A fixed suffix "@qnt42" for a personal/project touch.
  *
  * @return {string} A secure password string of approximately 16–18 characters.
  */
@@ -236,7 +289,8 @@ function generateRandomPassword() {
     const simpleSpecialChars = ".'*+^-|,_";
     const suffix = "@qnt42";
 
-    const allChars = lowerCaseChars + upperCaseChars + numbers + simpleSpecialChars;
+    const allChars =
+        lowerCaseChars + upperCaseChars + numbers + simpleSpecialChars;
 
     // Random prefix length between 10 and 12 to match total ~16-18 with suffix
     const prefixLength = 10 + secureRandomInt(3); // 10, 11, or 12
@@ -252,7 +306,8 @@ function generateRandomPassword() {
     prefixChars.push(numbers[secureRandomInt(numbers.length)]);
 
     // Ensure at least one special character in the shuffled part
-    const mandatorySpecial = simpleSpecialChars[secureRandomInt(simpleSpecialChars.length)];
+    const mandatorySpecial =
+        simpleSpecialChars[secureRandomInt(simpleSpecialChars.length)];
     prefixChars.push(mandatorySpecial);
 
     // Fill the rest of the prefix randomly
@@ -283,7 +338,7 @@ export function attachGeneratePasswordButton(buttonId, passwordFieldId) {
     const button = document.getElementById(buttonId);
     if (!button) return;
 
-    button.addEventListener("click", e => {
+    button.addEventListener("click", (e) => {
         e.preventDefault();
         const passwordField = document.getElementById(passwordFieldId);
         if (passwordField) {
@@ -295,7 +350,8 @@ export function attachGeneratePasswordButton(buttonId, passwordFieldId) {
             passwordField.type = "text";
 
             // Sync toggle icon if it exists
-            const toggleIcon = passwordField.parentElement.querySelector(".toggle-password i");
+            const toggleIcon =
+                passwordField.parentElement.querySelector(".toggle-password i");
             if (toggleIcon) {
                 toggleIcon.classList.remove("fa-eye-slash");
                 toggleIcon.classList.add("fa-eye");
@@ -305,12 +361,12 @@ export function attachGeneratePasswordButton(buttonId, passwordFieldId) {
 }
 
 /**
- * Starts an inactivity timer that automatically logs the user out 
+ * Starts an inactivity timer that automatically logs the user out
  * after a fixed period (default: 42 minutes) of no activity.
  *
  * Activity events such as keypresses and clicks reset the timer.
  * If the user remains idle past the timeout, `handleLogout()` is triggered.
- * 
+ *
  * Internal helpers:
  *  - resetTimer(): Resets the inactivity timer on user activity.
  *  - logTimeLeft(): (used for debugging) Logs remaining time until auto-logout.
@@ -322,16 +378,18 @@ export function startInactivityTimer() {
 
     // Reset timer whenever user interacts
     function resetTimer() {
-    lastActivityTime = Date.now(); // update on every activity
-    clearTimeout(timeout);
-    timeout = setTimeout(() => handleLogout(true), inactivityLogoutTime);
-}
+        lastActivityTime = Date.now(); // update on every activity
+        clearTimeout(timeout);
+        timeout = setTimeout(() => handleLogout(true), inactivityLogoutTime);
+    }
 
     // Function to log the remaining time before logout
     function logTimeLeft() {
         const timeElapsed = Date.now() - lastActivityTime;
         const timeLeft = Math.max(inactivityLogoutTime - timeElapsed, 0);
-        console.log(`Time left before logout: ${Math.ceil(timeLeft / 1000)} seconds`);
+        console.log(
+            `Time left before logout: ${Math.ceil(timeLeft / 1000)} seconds`
+        );
     }
 
     // Activity event listeners
@@ -339,14 +397,184 @@ export function startInactivityTimer() {
     document.addEventListener("click", resetTimer);
 
     /*
-    document.addEventListener("mousemove", resetTimer);
-    document.addEventListener("scroll", resetTimer);
-    document.addEventListener("touchstart", resetTimer);
-    */
+        document.addEventListener("mousemove", resetTimer);
+        document.addEventListener("scroll", resetTimer);
+        document.addEventListener("touchstart", resetTimer);
+        */
 
     // Start first timer
     resetTimer();
 
     // Log time left every second
     // setInterval(logTimeLeft, 1000);
+}
+
+/**
+ * Collects and validates OTP input fields.
+ *
+ * Ensures each OTP box only contains 1 digit.
+ * Returns the concatenated OTP string or "" if invalid.
+ *
+ * @param {string} selector - CSS selector for OTP input fields.
+ * @return {string} Concatenated OTP string.
+ */
+export function getOtpValue(selector = ".otp-input") {
+    const inputs = document.querySelectorAll(selector);
+    let otp = "";
+
+    for (const input of inputs) {
+        const value = input.value.trim();
+
+        // Validate: must be a single digit
+        if (!/^[0-9]{1}$/.test(value)) {
+            return ""; // Invalid OTP (missing or non-digit)
+        }
+        otp += value;
+    }
+
+    return otp;
+}
+
+/**
+ * Attach OTP input behavior (auto move, backspace, paste).
+ *
+ * @param {string} selector - CSS selector for OTP input fields.
+ */
+export function attachOtpHandlers(selector = ".otp-input") {
+    const otpInputs = document.querySelectorAll(selector);
+
+    otpInputs.forEach((input, index) => {
+        input.setAttribute("inputmode", "numeric"); // mobile numeric keypad
+        input.setAttribute("pattern", "[0-9]*");
+
+        input.addEventListener("input", (event) => {
+            let value = event.target.value.replace(/[^0-9]/g, "");
+            if (value.length > 1) value = value.charAt(0); // keep only first digit
+            event.target.value = value;
+
+            if (value !== "" && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Backspace" && input.value === "" && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+
+        input.addEventListener("paste", (event) => {
+            event.preventDefault();
+            const pasteData = (event.clipboardData || window.clipboardData)
+                .getData("text")
+                .replace(/[^0-9]/g, "")
+                .slice(0, otpInputs.length);
+
+            if (pasteData.length === 0) return;
+
+            otpInputs.forEach((field, idx) => {
+                field.value = pasteData[idx] || "";
+            });
+
+            const nextIndex = Math.min(pasteData.length, otpInputs.length - 1);
+            otpInputs[nextIndex].focus();
+        });
+    });
+}
+
+/**
+ * Low-level function: Sends email via EmailJS
+ */
+export async function sendEmail({
+    PublicKey,
+    serviceId,
+    templateId,
+    templateParams,
+    submitBtn,
+}) {
+    try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Sending ...';
+        }
+
+        emailjs.init(PublicKey);
+        const response = await emailjs.send(serviceId, templateId, templateParams);
+
+        console.log("EmailJS response:", response);
+
+        if (submitBtn) {
+            sessionStorage.setItem(
+                "success",
+                "Success: Your message has been sent! We'll get back to you soon."
+            );
+        }
+        return true;
+    } catch (error) {
+        console.error("EmailJS Error:", error);
+        // Store the error for debugging
+        storeEmailError(error);
+
+        sessionStorage.setItem(
+            "error",
+            "Error: Unable to send message. Please try again later."
+        );
+        return false;
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit";
+        }
+    }
+}
+
+/**
+ * High-level function: Sends an email using mailConfig
+ */
+export async function sendTemplateEmail(
+    account,
+    templateKey,
+    templateParams,
+    submitBtn
+) {
+    const config = mailConfig[account];
+    if (!config) {
+        console.error(`Email account not found: ${account}`);
+        return false;
+    }
+
+    const templateId = config.Templates?.[templateKey];
+    if (!templateId) {
+        console.error(
+            `Template ID not found for key: ${templateKey} in account: ${account}`
+        );
+        return false;
+    }
+
+    return await sendEmail({
+        PublicKey: config.PublicKey,
+        serviceId: config.ServiceId,
+        templateId,
+        templateParams,
+        submitBtn,
+    });
+}
+
+/**
+ * Stores email error details in localStorage.
+ * @param {*} error
+ */
+export function storeEmailError(error) {
+    try {
+        localStorage.setItem(
+            "emailError",
+            JSON.stringify({
+                message: error.message,
+                time: new Date().toISOString(),
+            })
+        );
+    } catch (e) {
+        console.error("Failed to store email error:", e);
+    }
 }
