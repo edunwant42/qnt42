@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            font-family: "Inter", sans-serif;
+        }
+
+        .email-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            width: 650px;
+            max-width: 100%;
+            margin: 20px auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eaeef2;
+        }
+
+        .header img {
+            width: 92px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-top: 0;
+        }
+
+        .txt {
+            font-size: 16px;
+            color: #4a5568;
+            line-height: 1.6;
+            margin: 25px 0;
+        }
+
+        .otp-box {
+            background-color: #edf2f7;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2b6cb0;
+            letter-spacing: 4px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .reset-btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: #4299e1;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 6px;
+            margin: 20px 0;
+            box-shadow: 0 3px 8px rgba(66, 153, 225, 0.25);
+        }
+
+        .reset-btn:hover {
+            background-color: #3182ce;
+        }
+
+        .note {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.6;
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .footer {
+            font-size: 14px;
+            color: #718096;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #eaeef2;
+        }
+
+        .footer-link {
+            color: #4299e1;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://edunwant42.github.io/qnt42/qnt42/src/assets/images/logo/note-logo-blue.webp" alt="QNT42 Logo" />
+            <h1 class="title">Reset Your Password</h1>
+            <p class="subtitle">QNT42 Account Security</p>
+        </div>
+
+        <div class="txt">
+            Hello <strong>{{to_name}}</strong>, <br /><br />
+            We received a request to reset the password for your QNT42 account
+            associated with <strong>{{to_email}}</strong>. Click the button below to
+            securely reset your password:
+        </div>
+
+        <div style="text-align: center">
+            <a href="{{reset_link}}" class="reset-btn"> Reset My Password </a>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> This reset link is valid for a limited time. If
+            it expires, please request a new password reset from the QNT42 recover page. If you did not request this reset, you can safely ignore
+            this email.
+        </div>
+
+        <div class="footer">
+            Best regards,<br />
+            <strong><span class="footer-link">QNT42 Team</span></strong>
+        </div>
+    </div>
+</body>
+
+</html>
