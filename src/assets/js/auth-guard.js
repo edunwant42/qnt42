@@ -16,9 +16,9 @@ const PAGE_TYPES = {
 // Canonical routes used across the app
 const ROUTES = {
     DASHBOARD: '/qnt42/src/pages/dashboard.html',
-    LOGIN: '/qnt42/src/pages/auth/login.html',
-    REGISTER: '/qnt42/src/pages/auth/register.html',
-    HOME: '/qnt42/'
+    LOGIN: '/qnt42/src/pages/auth/authenticate.html?action=login',
+    REGISTER: '/qnt42/src/pages/auth/authenticate.html?action=register',
+    HOME: '/'
 };
 
 /**
@@ -29,15 +29,15 @@ function getCurrentPageType() {
     const path = window.location.pathname.toLowerCase();
 
     // Protected dashboard pages
-    if (path.includes('dashboard.html') || path.includes('/qnt42/src/pages/dashboard.html')) {
+    if (path.includes('dashboard.html') || path.includes('../../pages/dashboard.html')) {
         return PAGE_TYPES.AUTH_ONLY;
     }
 
     // Guest-only pages (login, register, index/home)
     if (
-        path.includes('/qnt42/src/pages/auth/login.html') ||
-        path.includes('/qnt42/src/pages/auth/register.html') ||
-        path === '/qnt42/' ||
+        path.includes('/auth/login.html') ||
+        path.includes('/auth/register.html') ||
+        path === '/' ||
         path.includes('index.html')
     ) {
         return PAGE_TYPES.GUEST_ONLY;
