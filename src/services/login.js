@@ -22,11 +22,19 @@ const loginButton = document.getElementById("login-btn");
 loginButton.addEventListener("click", async (event) => {
   event.preventDefault();
 
-  // Capture and sanitize input values
-  const email = sanitizeInput(document.getElementById("email").value);
-  const password = sanitizeInput(document.getElementById("password").value);
+  // Store original button content
+  const originalText = loginButton.innerHTML;
+  const originalDisabled = loginButton.disabled;
 
-  let redirectTo = "/qnt42/src/pages/auth/login.html";
+  // Show loading state
+  loginButton.disabled = true;
+  loginButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Signing in...';
+
+  // Capture and sanitize input values
+  const email = sanitizeInput(document.getElementById("sign-in_email").value);
+  const password = sanitizeInput(document.getElementById("sign-in_password").value);
+
+  let redirectTo = "/qnt42/src/pages/auth/authenticate.html?action=login";
 
   // Run validations
   if (
@@ -34,6 +42,9 @@ loginButton.addEventListener("click", async (event) => {
     !checkEmptyField("Password", password, "redirect", redirectTo) ||
     !validateEmail(email, "redirect", redirectTo)
   ) {
+    // Reset button state if validation fails
+    loginButton.disabled = originalDisabled;
+    loginButton.innerHTML = originalText;
     return;
   }
 
@@ -47,11 +58,28 @@ loginButton.addEventListener("click", async (event) => {
 
     if (!snapshot.exists()) {
       sessionStorage.setItem("error", "Error: User data not found.");
-      window.location.href = "/qnt42/src/pages/auth/login.html";
+
+      // Reset button state
+      loginButton.disabled = originalDisabled;
+      loginButton.innerHTML = originalText;
+
+      window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=login";
       return;
     }
 
     const data = snapshot.val();
+
+    if (!data.verified) {
+      sessionStorage.setItem("Info", "Info: Your account is not verified. Check your email for the verification OTP.");
+
+      // Reset button state
+      loginButton.disabled = originalDisabled;
+      loginButton.innerHTML = originalText;
+
+      window.location.href = "/qnt42/src/pages/auth/secure.html?action=verify&uid=" + userCredential.user.uid;
+      return;
+    }
+
     const username = data.username || "!F";
     const secretKey = data.secretKey || "!F";
 
@@ -86,6 +114,15 @@ loginButton.addEventListener("click", async (event) => {
     }
 
     sessionStorage.setItem(notifType, userMessage);
-    window.location.href = "/qnt42/src/pages/auth/login.html";
-  };
+
+    // Reset button state
+    loginButton.disabled = originalDisabled;
+    loginButton.innerHTML = originalText;
+
+    window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=login";
+  } finally {
+    // Ensure button is reset even if there's an unhandled exception
+    loginButton.disabled = originalDisabled;
+    loginButton.innerHTML = originalText;
+  }
 });
