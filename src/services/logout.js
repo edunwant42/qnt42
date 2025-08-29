@@ -28,7 +28,7 @@ async function handleLogout(inactivity = false) {
         }
 
         // Redirect to home page
-        window.location.href = "/qnt42/";
+        window.location.href = "/";
     } catch (err) {
         console.error("Logout failed", err);
         alert("Logout failed. Please try again.");
