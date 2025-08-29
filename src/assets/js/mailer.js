@@ -1,84 +1,137 @@
-
-// Initialize EmailJS
-emailjs.init("Qqhic5QGBOAI1R4qv"); // Replace with your public key
-
 import {
-  sanitizeInput,
-  checkEmptyField,
-  validateEmail,
-} from "/qnt42/src/assets/js/utils.js";
+    sanitizeInput,
+    checkEmptyField,
+    validateEmail,
+    sendTemplateEmail,
+} from "./utils.js";
 
-document.addEventListener("DOMContentLoaded", function () {
-  const contactForm = document.getElementById("contact-form");
-  const submitBtn = document.getElementById("submit-btn");
+/**
+ * Initialize contact form with EmailJS
+ */
+export function initContactForm({
+    formId = "contact-form",
+    submitBtnId = "submit-btn",
+    reloadAfterSend = true,
+}) {
+    const contactForm = document.getElementById(formId);
+    const submitBtn = document.getElementById(submitBtnId);
 
-  if (contactForm) {
-    contactForm.addEventListener("submit", async function (event) {
-      event.preventDefault();
+    if (!contactForm) return;
 
-      // Collect raw inputs
-      let fromName = document.getElementById("from_name").value;
-      let fromEmail = document.getElementById("from_email").value;
-      let subject = document.getElementById("subject").value;
-      let message = document.getElementById("message").value;
+    contactForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-      // Sanitize inputs
-      fromName = sanitizeInput(fromName);
-      fromEmail = sanitizeInput(fromEmail);
-      subject = sanitizeInput(subject);
-      message = sanitizeInput(message);
+        const fromName = sanitizeInput(document.getElementById("from_name").value);
+        const fromEmail = sanitizeInput(
+            document.getElementById("from_email").value
+        );
+        const subject = sanitizeInput(document.getElementById("subject").value);
+        const message = sanitizeInput(document.getElementById("message").value);
 
-      if (
-        !checkEmptyField("Full Name", fromName) ||
-        !checkEmptyField("Email Address", fromEmail) ||
-        !checkEmptyField("Subject", subject) ||
-        !checkEmptyField("Message", message) ||
-        !validateEmail(fromEmail)
-      ) {
-        return; // Stop if validation failed
-      }
+        if (
+            !checkEmptyField("Full Name", fromName) ||
+            !checkEmptyField("Email Address", fromEmail) ||
+            !checkEmptyField("Subject", subject) ||
+            !checkEmptyField("Message", message) ||
+            !validateEmail(fromEmail)
+        )
+            return;
 
-      // Prepare template parameters
-      const templateParams = {
-        from_name: fromName,
-        from_email: fromEmail,
-        subject: subject,
-        message: message,
-        to_name: "QNT42 Contact Team",
-        sent_time: new Date().toLocaleString(),
-      };
+        const templateParams = {
+            from_name: fromName,
+            from_email: fromEmail,
+            subject,
+            message,
+            sent_time: new Date().toLocaleString(),
+        };
 
-      try {
-        // Show loading inside button
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML =
-          '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Sending ...';
-
-        await emailjs.send(
-          "srvc-v7pfbpe_qnt42",
-          "tmpl-2v3fjwo_qnt42",
-          templateParams
+        const success = await sendTemplateEmail(
+            "contact",
+            "contact",
+            templateParams,
+            submitBtn
         );
 
-        sessionStorage.setItem(
-          "success",
-          "Success: Your message has been sent! We'll get back to you soon."
-        );
-        contactForm.reset();
-      } catch (error) {
-        console.error("EmailJS Error:", error);
-        sessionStorage.setItem(
-          "error",
-          "Error: There was an issue sending your message. Please try again later."
-        );
-      } finally {
-        // Restore button
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit";
-
-        window.location.reload(); // To show notification
-      }
+        if (success) {
+            contactForm.reset();
+            if (reloadAfterSend) window.location.reload();
+        }
     });
-  }
-});
+}
+
+/**
+ * Send account-related emails (welcome, password reset, verification, etc.)
+ *
+ * @param {string} type - The type of email to send
+ * @param {string} userEmail - The recipient's email address
+ * @param {string} userName - The recipient's name
+ * @param {Object} additionalParams - Additional template parameters
+ * @returns {Promise<boolean>} Success status
+ */
+export async function sendAccountEmail(
+    type,
+    userEmail,
+    userName,
+    additionalParams = {}
+) {
+    const emailConfig = {
+        welcome: {
+            account: "Updates",
+            templateKey: "welcome",
+            defaultParams: {
+                email: userEmail,
+                to_name: userName,
+            },
+        },
+        passwordResetSuccess: {
+            account: "Security",
+            templateKey: "reset",
+            defaultParams: {
+                email: userEmail,
+                to_name: userName,
+            },
+        },
+        verifyAccount: {
+            account: "Security",
+            templateKey: "verify",
+            defaultParams: {
+                email: userEmail,
+                to_name: userName,
+            },
+        },
+        forgotPassword: {
+            account: "Support",
+            templateKey: "forgot",
+            defaultParams: {
+                email: userEmail,
+                to_name: userName,
+            },
+        },
+        recoverOtp: {
+            account: "Support",
+            templateKey: "recoverOtp",
+            defaultParams: {
+                email: userEmail,
+                to_name: userName,
+            },
+        },
+    };
+
+    const config = emailConfig[type];
+    if (!config) {
+        console.error(`Unsupported email type: ${type}`);
+        return false;
+    }
+
+    const templateParams = {
+        ...config.defaultParams,
+        ...additionalParams,
+    };
+
+    return await sendTemplateEmail(
+        config.account,
+        config.templateKey,
+        templateParams,
+        null // No submit button for automated emails
+    );
+}
