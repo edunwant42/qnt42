@@ -35,14 +35,15 @@
                         <i class="fa-solid fa-eye-slash toggle-password" data-target="password"></i>
                     </div>
                     <div class="forgot-password">
-                        <a href="/qnt42/src/pages/auth/recover.html?action=forgot" class="forgot-password-link">Forgot your Password?</a>
+                        <a href="/qnt42/src/pages/auth/recover.html?action=forgot" class="forgot-password-link">Forgot
+                            your Password?</a>
                     </div>
                     <button type="submit" class="btn solid" id="login-btn">Login</button>
                     <p class="social-text">Or Sign in using your google account</p>
                     <div class="social-media">
-                        <a href="/qnt42/src/pages/auth/oauth.html?action=login" class="social-icon">
+                        <button class="social-icon" id="google-login-btn">
                             <img class="social-img" src="/qnt42/src/assets/images/google.webp" alt="google">
-                        </a>
+                        </button>
                     </div>
                 </form>
                 <form class="sign-up-form" id="signUpForm" autocomplete="off">
@@ -69,7 +70,8 @@
                     <div class="form-links">
                         <a id="generatePasswordBtn" class="link-primary generate-password"> <i class="fas fa-gear"></i>
                             Generate Password</a>
-                        <a href="/" class="link-primary">Return <span style="color: var(--primary-color);">Home</span>
+                        <a href="/" class="link-primary">Return <span
+                                style="color: var(--primary-color);">Home</span>
                             ?</a>
                     </div>
                     <!-- Terms Checkbox -->
@@ -81,19 +83,20 @@
                                     <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
                                 </svg>
                             </span>
-                            <span> I agree to the <a href="/qnt42/src/policies/termsOfService.html" target="_blank">Terms of
+                            <span> I agree to the <a href="/qnt42/src/pages/policies/termsOfService.html"
+                                    target="_blank">Terms of
                                     Use</a>
                                 and
-                                <a href="/qnt42/src/policies/privacyPolicy.html" target="_blank">Privacy Policy</a>.
+                                <a href="/qnt42/src/pages/policies/privacyPolicy.html" target="_blank">Privacy Policy</a>.
                             </span>
                         </label>
                     </div>
                     <button type="submit" class="btn" id="register-btn">Sign up</button>
                     <p class="social-text">Or Sign up using your google account</p>
                     <div class="social-media">
-                        <a href="/qnt42/src/pages/auth/oauth.html?action=register" class="social-icon">
+                        <button class="social-icon" id="google-register-btn">
                             <img class="social-img" src="/qnt42/src/assets/images/google.webp" alt="google">
-                        </a>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -110,7 +113,7 @@
                         Sign up
                     </button>
                 </div>
-                <img src="/qnt42/src/assets/images/sign up.webp" class="image" alt="" />
+                <img src="/qnt42/src/assets/images/sign up.webp" class="image" alt="Sign Up Illustration" />
             </div>
             <div class="panel right-panel">
                 <div class="content">
@@ -122,13 +125,14 @@
                         Sign in
                     </button>
                 </div>
-                <img src="/qnt42/src/assets/images/sign in.webp" class="image" alt="" />
+                <img src="/qnt42/src/assets/images/sign in.webp" class="image" alt="Sign In Illustration" />
             </div>
         </div>
     </div>
     <script src="/qnt42/src/assets/js/formSwitcher.js"></script>
     <script type="module" src="/qnt42/src/services/login.js"></script>
     <script type="module" src="/qnt42/src/services/register.js"></script>
+    <script type="module" src="/qnt42/src/services/oauth.js"></script>
     <script type="module">
         import {
             attachPasswordToggles,
