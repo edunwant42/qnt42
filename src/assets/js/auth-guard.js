@@ -18,7 +18,11 @@ const ROUTES = {
     DASHBOARD: '/qnt42/src/pages/dashboard.html',
     LOGIN: '/qnt42/src/pages/auth/authenticate.html?action=login',
     REGISTER: '/qnt42/src/pages/auth/authenticate.html?action=register',
-    HOME: '/'
+    FORGOT_PASSWORD: '/qnt42/src/pages/auth/recover.html?action=forgot',
+    RECOVER_OTP: '/qnt42/src/pages/auth/recover.html?action=recover',
+    RESET_PASSWORD: '/qnt42/src/pages/auth/secure.html?action=reset',
+    VERIFY_ACCOUNT: '/qnt42/src/pages/auth/secure.html?action=verify',
+    HOME: '/qnt42/'
 };
 
 /**
@@ -29,15 +33,16 @@ function getCurrentPageType() {
     const path = window.location.pathname.toLowerCase();
 
     // Protected dashboard pages
-    if (path.includes('dashboard.html') || path.includes('../../pages/dashboard.html')) {
+    if (path.includes('/pages/dashboard.html')) {
         return PAGE_TYPES.AUTH_ONLY;
     }
 
-    // Guest-only pages (login, register, index/home)
+    // Guest-only pages (authenticate, recover, secure, index/)
     if (
-        path.includes('/auth/login.html') ||
-        path.includes('/auth/register.html') ||
-        path === '/' ||
+        path.includes('/auth/authenticate.html') ||
+        path.includes('/auth/recover.html') ||
+        path.includes('/auth/secure.html') ||
+        path === '/qnt42/' ||
         path.includes('index.html')
     ) {
         return PAGE_TYPES.GUEST_ONLY;
