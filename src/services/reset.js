@@ -21,7 +21,7 @@ function initResetPasswordPage() {
                 // Show info message
                 sessionStorage.setItem(
                     "info",
-                    "Info: Password reset feature is currently under development and will be available in a future update."
+                    "Notice: Password reset feature is currently under development and will be available in a future update."
                 );
                 
                 // Reset button state

@@ -30,7 +30,7 @@ function initForgotPasswordPage() {
             // Show info message specific to password reset
             sessionStorage.setItem(
                 "info",
-                "Info: Password recovery is currently in development. For now, please try to contact support our support if you need assistance."
+                "Notice: Password recovery is currently in development. For now, please try to contact our support if you need assistance."
             );
             
             // Reset button state
