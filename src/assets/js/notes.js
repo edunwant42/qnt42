@@ -17,20 +17,36 @@ const COLOR_THEMES = {
 /*     DATA PERSISTENCE FUNCTIONS     */
 /**************************************/
 
+// Get the storage key for the current user's notes
+function getNotesKey() {
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    if (!userInfo || !userInfo.uid) {
+        console.error("No user info found");
+        return null;
+    }
+    return `qnt42_${userInfo.uid}`;
+}
+
 /**
- * Loads notes from localStorage
+ * Loads notes from localStorage for the current user
  * @returns {Array} Array of notes or empty array if none exist
  */
 function loadNotes() {
-    const savedNotes = localStorage.getItem("quickNotes");
+    const notesKey = getNotesKey();
+    if (!notesKey) return [];
+
+    const savedNotes = localStorage.getItem(notesKey);
     return savedNotes ? JSON.parse(savedNotes) : [];
 }
 
 /**
- * Saves notes array to localStorage
+ * Saves notes array to localStorage for the current user
  */
 function saveNotes() {
-    localStorage.setItem("quickNotes", JSON.stringify(notes));
+    const notesKey = getNotesKey();
+    if (!notesKey) return;
+
+    localStorage.setItem(notesKey, JSON.stringify(notes));
 }
 
 /**
@@ -52,7 +68,12 @@ function generateId() {
  * @param {boolean} isConfirmation - Whether to show confirm/cancel buttons
  * @param {Function} confirmCallback - Callback function for confirmation
  */
-function showCustomAlert(title, message, isConfirmation = false, confirmCallback = null) {
+function showCustomAlert(
+    title,
+    message,
+    isConfirmation = false,
+    confirmCallback = null
+) {
     const alertBox = document.getElementById("customAlert");
     const alertTitle = document.getElementById("alertTitle");
     const alertMessage = document.getElementById("alertMessage");
@@ -71,7 +92,9 @@ function showCustomAlert(title, message, isConfirmation = false, confirmCallback
         alertTitle.style.color = "#e74c3c";
         confirmBtn.classList.add("error");
     } else {
-        alertTitle.style.color = getComputedStyle(document.body).getPropertyValue("--brand-color");
+        alertTitle.style.color = getComputedStyle(document.body).getPropertyValue(
+            "--brand-color"
+        );
         confirmBtn.classList.add("confirm");
     }
     if (isConfirmation) {
@@ -113,57 +136,93 @@ function closeCustomAlert() {
  * Handles form validation, keyword processing, and duplicate detection
  * @param {Event} event - Form submit event
  */
-function saveNote(event) {
+async function saveNote(event) {
     event.preventDefault();
     const title = document.getElementById("noteTitle").value.trim();
     const content = document.getElementById("noteContent").value.trim();
     const keywordsInput = document.getElementById("noteKeywords").value.trim();
 
     // Process keywords: split, trim, convert to lowercase, and remove duplicates
-    const rawKeywords = keywordsInput ? keywordsInput.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean) : [];
+    const rawKeywords = keywordsInput
+        ? keywordsInput
+            .split(",")
+            .map((k) => k.trim().toLowerCase())
+            .filter(Boolean)
+        : [];
     const uniqueKeywords = [...new Set(rawKeywords)];
     const MAX_KEYWORDS = 5;
 
     // Validate keywords
     if (rawKeywords.length !== uniqueKeywords.length) {
-        showCustomAlert("Duplicate Keywords", "You have entered duplicate keywords. Only unique keywords will be saved.", false);
+        showCustomAlert(
+            "Duplicate Keywords",
+            "You have entered duplicate keywords. Only unique keywords will be saved.",
+            false
+        );
     }
     if (uniqueKeywords.length > MAX_KEYWORDS) {
-        showCustomAlert("Too Many Keywords", `You can only add up to ${MAX_KEYWORDS} keywords. The first ${MAX_KEYWORDS} will be used.`, false);
+        showCustomAlert(
+            "Too Many Keywords",
+            `You can only add up to ${MAX_KEYWORDS} keywords. The first ${MAX_KEYWORDS} will be used.`,
+            false
+        );
         uniqueKeywords.splice(MAX_KEYWORDS);
     }
 
     const now = new Date().toISOString();
 
-    // Update existing note or create new one
-    if (editingNoteId) {
-        const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
-        notes[noteIndex] = {
-            ...notes[noteIndex],
-            title,
-            content,
-            modifiedAt: now,
-            keywords: uniqueKeywords,
-        };
-    } else {
-        // Create new note and add to beginning of array
-        notes.unshift({
-            id: generateId(),
-            title,
-            content,
-            createdAt: now,
-            modifiedAt: now,
-            keywords: uniqueKeywords,
-            pinned: false,
-            archived: false,
-        });
+    // Get user info for encryption
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    if (!userInfo || !userInfo.secretKey) {
+        showCustomAlert("Error", "User authentication required");
+        return;
     }
 
-    // Clean up and refresh UI
-    closeNoteDialog();
-    saveNotes();
-    renderNotes();
-    document.getElementById("searchInput").value = "";
+    // Encrypt note content and keywords
+    try {
+        const encryptedContent = await encryptData(content, userInfo.secretKey);
+        const encryptedTitle = await encryptData(title, userInfo.secretKey);
+
+        // Encrypt each keyword individually
+        const encryptedKeywords = [];
+        for (const keyword of uniqueKeywords) {
+            const encryptedKeyword = await encryptData(keyword, userInfo.secretKey);
+            encryptedKeywords.push(encryptedKeyword);
+        }
+
+        // Update existing note or create new one
+        if (editingNoteId) {
+            const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+            notes[noteIndex] = {
+                ...notes[noteIndex],
+                title: encryptedTitle,
+                content: encryptedContent,
+                modifiedAt: now,
+                keywords: encryptedKeywords, // Store encrypted keywords
+            };
+        } else {
+            // Create new note and add to beginning of array
+            notes.unshift({
+                id: generateId(),
+                title: encryptedTitle,
+                content: encryptedContent,
+                createdAt: now,
+                modifiedAt: now,
+                keywords: encryptedKeywords, // Store encrypted keywords
+                pinned: false,
+                archived: false,
+            });
+        }
+
+        // Clean up and refresh UI
+        closeNoteDialog();
+        saveNotes();
+        renderNotes();
+        document.getElementById("searchInput").value = "";
+    } catch (error) {
+        console.error("Error encrypting note:", error);
+        showCustomAlert("Error", "Failed to save note");
+    }
 }
 
 /**
@@ -186,11 +245,16 @@ function deleteAllNotes() {
         showCustomAlert("No Notes", "There are no notes to delete.", false);
         return;
     }
-    showCustomAlert("Delete All Notes?", "Are you sure you want to delete ALL notes? This action cannot be undone.", true, function () {
-        notes = [];
-        saveNotes();
-        renderNotes();
-    });
+    showCustomAlert(
+        "Delete All Notes?",
+        "Are you sure you want to delete ALL notes? This action cannot be undone.",
+        true,
+        function () {
+            notes = [];
+            saveNotes();
+            renderNotes();
+        }
+    );
 }
 
 /**
@@ -232,7 +296,7 @@ function toggleArchive(noteId) {
  * Handles three views: statistics, notes grid, and empty state
  * @param {Array} filteredNotes - Optional pre-filtered array of notes
  */
-function renderNotes(filteredNotes) {
+async function renderNotes(filteredNotes) {
     const container = document.getElementById("notesContainer");
     let notesToRender = Array.isArray(filteredNotes) ? filteredNotes : notes;
 
@@ -318,10 +382,10 @@ function renderNotes(filteredNotes) {
 
         container.innerHTML = ` 
             <div class="empty-state"> 
-                <img class="no-notes-image" src="/qnt42/src/assets/images/no-item.webp" alt="No Notes" /> 
-                <p>${currentFilter === "archived" ?
-                "<h1>No archived notes found.</h1><br> Create a new note, or archive some existing notes!" :
-                "<h1>No notes found.</h1><br> Create your first note to get started!"
+                <img class="no-notes-image" src="/qnt42/src/assets/images/illustrations/no-item.webp" alt="No Notes" /> 
+                <p>${currentFilter === "archived"
+                ? "<h1>No archived notes found.</h1><br> Create a new note, or archive some existing notes!"
+                : "<h1>No notes found.</h1><br> Create your first note to get started!"
             }</p> 
                 <button class="add-note-btn" onclick="openNoteDialog()"> 
                     <i class="ri-add-line"></i> Add Your First Note 
@@ -338,6 +402,52 @@ function renderNotes(filteredNotes) {
         return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
+    // Decrypt notes before rendering
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    if (!userInfo || !userInfo.secretKey) {
+        showCustomAlert("Error", "User authentication required");
+        return;
+    }
+
+    const decryptedNotes = [];
+    for (const note of sortedNotes) {
+        try {
+            const decryptedTitle = await decryptData(note.title, userInfo.secretKey);
+
+            const decryptedContent = await decryptData(
+                note.content,
+                userInfo.secretKey
+            );
+
+            // Decrypt each keyword
+            const decryptedKeywords = [];
+            for (const encryptedKeyword of note.keywords) {
+                const decryptedKeyword = await decryptData(
+                    encryptedKeyword,
+                    userInfo.secretKey
+                );
+                decryptedKeywords.push(decryptedKeyword);
+            }
+
+            decryptedNotes.push({
+                ...note,
+                title: decryptedTitle,
+                content: decryptedContent,
+                keywords: decryptedKeywords,
+            });
+        } catch (error) {
+            console.error("Error decrypting note:", error);
+            // Show placeholder for undecryptable notes
+            decryptedNotes.push({
+                ...note,
+                title: "Encrypted Note",
+                content:
+                    "Unable to decrypt this note. Please check your authentication.",
+                keywords: ["encrypted"],
+            });
+        }
+    }
+
     // Set up grid layout for notes
     container.style.display = "grid";
     container.style.gridTemplateColumns = "repeat(auto-fill, minmax(350px, 1fr))";
@@ -347,11 +457,14 @@ function renderNotes(filteredNotes) {
     container.style.padding = "1rem";
 
     // Render note cards
-    container.innerHTML = sortedNotes.map((note) => ` 
+    container.innerHTML = decryptedNotes
+        .map(
+            (note) => ` 
         <div class="note-card"> 
             <div class="note-body"> 
                 <h3 class="note-title"> 
-                    <i class="pin-icon ri-${note.pinned ? "pushpin-fill" : "pushpin-line"}" 
+                    <i class="pin-icon ri-${note.pinned ? "pushpin-fill" : "pushpin-line"
+                }" 
                        onclick="togglePin('${note.id}')" 
                        title="${note.pinned ? "Unpin Note" : "Pin Note"}" 
                        style="cursor: pointer; margin-right: 0.5rem; vertical-align: middle;"></i> 
@@ -361,21 +474,30 @@ function renderNotes(filteredNotes) {
                 <p class="note-content">${note.content}</p> 
             </div> 
             <div class="note-keywords"> 
-                ${note.keywords.map((kw) => `<span class="keyword-tag">${kw}</span>`).join("")} 
+                ${note.keywords
+                    .map((kw) => `<span class="keyword-tag">${kw}</span>`)
+                    .join("")} 
             </div> 
             <div class="note-actions"> 
-                <button class="edit-btn" onclick="openNoteDialog('${note.id}')" title="Edit Note"> 
+                <button class="edit-btn" onclick="openNoteDialog('${note.id
+                }')" title="Edit Note"> 
                     <i class="ri-pencil-line"></i> 
                 </button> 
-                <button class="edit-btn" onclick="toggleArchive('${note.id}')" title="${note.archived ? "Unarchive Note" : "Archive Note"}"> 
-                    <i class="ri-archive-${note.archived ? "line" : "fill"}"></i> 
+                <button class="edit-btn" onclick="toggleArchive('${note.id
+                }')" title="${note.archived ? "Unarchive Note" : "Archive Note"
+                }"> 
+                    <i class="ri-archive-${note.archived ? "line" : "fill"
+                }"></i> 
                 </button> 
-                <button class="delete-btn" onclick="deleteNote('${note.id}')" title="Delete Note"> 
+                <button class="delete-btn" onclick="deleteNote('${note.id
+                }')" title="Delete Note"> 
                     <i class="ri-delete-bin-6-line"></i> 
                 </button> 
             </div> 
         </div> 
-    `).join("");
+    `
+        )
+        .join("");
 }
 
 /**************************************/
@@ -397,8 +519,9 @@ function filterNotes(query) {
         if (note.archived && currentFilter === "all") return false;
         if (!note.archived && currentFilter === "archived") return false;
 
-        // Then filter by search query
-        const searchableString = [note.title, note.content, note.keywords.join(" ")].join(" ").toLowerCase();
+        // Then filter by search query (note: we can't search encrypted content)
+        // In a real implementation, you might want to store unencrypted keywords for search
+        const searchableString = note.keywords.join(" ").toLowerCase();
         return searchableString.includes(lowerQuery);
     });
 }
@@ -415,7 +538,9 @@ function setFilter(filterType) {
     document.querySelectorAll(".filter-btn").forEach((btn) => {
         btn.classList.remove("active");
     });
-    document.querySelector(`.filter-btn[onclick="setFilter('${filterType}')"]`).classList.add("active");
+    document
+        .querySelector(`.filter-btn[onclick="setFilter('${filterType}')"]`)
+        .classList.add("active");
 
     // Clear search and re-render
     document.getElementById("searchInput").value = "";
@@ -430,7 +555,7 @@ function setFilter(filterType) {
  * Opens the note creation/editing dialog
  * @param {string|null} noteId - ID of note to edit, or null for new note
  */
-function openNoteDialog(noteId = null) {
+async function openNoteDialog(noteId = null) {
     closeExpandedHeader();
     const dialog = document.getElementById("noteDialog");
     const form = document.getElementById("noteForm");
@@ -444,9 +569,41 @@ function openNoteDialog(noteId = null) {
         // Populate form with existing note data
         const note = notes.find((n) => n.id === noteId);
         if (note) {
-            titleInput.value = note.title;
-            contentInput.value = note.content;
-            keywordsInput.value = note.keywords.join(", ");
+            // Decrypt the note content for editing
+            const userInfo = JSON.parse(localStorage.getItem("user-info"));
+            if (userInfo && userInfo.secretKey) {
+                try {
+                    const decryptedTitle = await decryptData(
+                        note.title,
+                        userInfo.secretKey
+                    );
+                    const decryptedContent = await decryptData(
+                        note.content,
+                        userInfo.secretKey
+                    );
+
+                    // Decrypt keywords for editing
+                    const decryptedKeywords = [];
+                    for (const encryptedKeyword of note.keywords) {
+                        const decryptedKeyword = await decryptData(
+                            encryptedKeyword,
+                            userInfo.secretKey
+                        );
+                        decryptedKeywords.push(decryptedKeyword);
+                    }
+
+                    titleInput.value = decryptedTitle;
+                    contentInput.value = decryptedContent;
+                    keywordsInput.value = decryptedKeywords.join(", ");
+                } catch (error) {
+                    console.error("Error decrypting note for editing:", error);
+                    showCustomAlert("Error", "Failed to load note for editing");
+                    return;
+                }
+            } else {
+                showCustomAlert("Error", "User authentication required");
+                return;
+            }
         }
     } else {
         // Reset form for new note
@@ -471,7 +628,7 @@ function closeNoteDialog() {
 /**
  * Exports all notes as a JSON file
  */
-function exportNotes() {
+async function exportNotes() {
     closeExpandedHeader();
     if (notes.length === 0) {
         showCustomAlert("Export Failed", "No notes to export.", false);
@@ -487,7 +644,7 @@ function exportNotes() {
 
     // Generate timestamped filename
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-');
+    const timestamp = now.toISOString().slice(0, 19).replace(/:/g, "-");
     const defaultFilename = `quick_notes_${timestamp}.json`;
     a.download = defaultFilename;
 
@@ -509,7 +666,11 @@ function importNotes(event) {
 
     // Validate file type
     if (file.type !== "application/json") {
-        showCustomAlert("Operation Failed", "Invalid file type. Please upload a JSON file.", false);
+        showCustomAlert(
+            "Operation Failed",
+            "Invalid file type. Please upload a JSON file.",
+            false
+        );
         return;
     }
 
@@ -520,7 +681,11 @@ function importNotes(event) {
 
             // Validate JSON structure
             if (!Array.isArray(importedNotes)) {
-                showCustomAlert("Operation Failed", "Invalid JSON format. Expected an array of notes.", false);
+                showCustomAlert(
+                    "Operation Failed",
+                    "Invalid JSON format. Expected an array of notes.",
+                    false
+                );
                 return;
             }
 
@@ -529,10 +694,16 @@ function importNotes(event) {
             // Process each imported note
             importedNotes.forEach((note) => {
                 // Validate note structure
-                if (note.id && note.title && note.content && note.createdAt && note.modifiedAt &&
-                    Array.isArray(note.keywords) && typeof note.pinned === "boolean" &&
-                    typeof note.archived === "boolean") {
-
+                if (
+                    note.id &&
+                    note.title &&
+                    note.content &&
+                    note.createdAt &&
+                    note.modifiedAt &&
+                    Array.isArray(note.keywords) &&
+                    typeof note.pinned === "boolean" &&
+                    typeof note.archived === "boolean"
+                ) {
                     // Check for duplicates by ID
                     if (!notes.find((n) => n.id === note.id)) {
                         notes.push(note);
@@ -543,14 +714,26 @@ function importNotes(event) {
 
             // Show import results
             if (newNotesCount === 0) {
-                showCustomAlert("Operation Failed", "No new notes were imported (all duplicates).", false);
+                showCustomAlert(
+                    "Operation Failed",
+                    "No new notes were imported (all duplicates).",
+                    false
+                );
             } else {
-                showCustomAlert("Operation Succeeded", `${newNotesCount} note(s) imported successfully.`, false);
+                showCustomAlert(
+                    "Operation Succeeded",
+                    `${newNotesCount} note(s) imported successfully.`,
+                    false
+                );
                 saveNotes();
                 renderNotes();
             }
         } catch (error) {
-            showCustomAlert("Operation Failed", "Failed to import notes: Invalid JSON file.", false);
+            showCustomAlert(
+                "Operation Failed",
+                "Failed to import notes: Invalid JSON file.",
+                false
+            );
         }
     };
 
@@ -562,14 +745,16 @@ function importNotes(event) {
 /*   THEME AND APPEARANCE FUNCTIONS   */
 /**************************************/
 
-
 /**
  * Toggles between light and dark theme
  */
 function toggleTheme() {
     closeExpandedHeader();
     document.body.classList.toggle("dark-theme");
-    localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
+    localStorage.setItem(
+        "theme",
+        document.body.classList.contains("dark-theme") ? "dark" : "light"
+    );
 }
 
 /**
@@ -639,17 +824,6 @@ function updateFaviconAndLogo(colorName) {
     }
 }
 
-function setFilter(filterType) {
-    closeExpandedHeader();
-    currentFilter = filterType;
-    document.querySelectorAll(".filter-btn").forEach((btn) => {
-        btn.classList.remove("active");
-    });
-    document.querySelector(`.filter-btn[onclick="setFilter('${filterType}')"]`).classList.add("active");
-    document.getElementById("searchInput").value = "";
-    renderNotes();
-}
-
 /**************************************/
 /*  UI STATE AND RESPONSIVE FUNCTIONS */
 /**************************************/
@@ -657,13 +831,12 @@ function setFilter(filterType) {
 /**
  * Closes the expanded header overlay (mobile view)
  */
-/**
- * Closes the expanded header overlay (mobile view)
- */
 function closeExpandedHeader() {
     const headerBar = document.getElementById("headerBar");
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
-    const headerExpandedContent = document.getElementById("headerExpandedContent");
+    const headerExpandedContent = document.getElementById(
+        "headerExpandedContent"
+    );
     const overlay = document.getElementById("headerOverlay");
 
     if (headerBar) {
@@ -673,7 +846,7 @@ function closeExpandedHeader() {
         sidebarToggleBtn.querySelector("i").className = "ri-menu-line";
     }
     if (headerExpandedContent) {
-        headerExpandedContent.style.display = 'none';
+        headerExpandedContent.style.display = "none";
     }
     if (overlay) {
         overlay.remove();
@@ -688,7 +861,9 @@ function handleResize() {
     const mainWrapper = document.getElementById("mainWrapper");
     const headerBar = document.getElementById("headerBar");
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
-    const headerExpandedContent = document.getElementById("headerExpandedContent");
+    const headerExpandedContent = document.getElementById(
+        "headerExpandedContent"
+    );
     const overlay = document.getElementById("headerOverlay");
 
     // Mobile layout (width <= 550px)
@@ -702,7 +877,7 @@ function handleResize() {
             sidebarToggleBtn.querySelector("i").className = "ri-menu-line";
         }
         if (headerExpandedContent) {
-            headerExpandedContent.style.display = 'none';
+            headerExpandedContent.style.display = "none";
         }
         if (overlay) {
             overlay.remove();
@@ -719,7 +894,7 @@ function handleResize() {
             sidebarToggleBtn.querySelector("i").className = "ri-menu-line";
         }
         if (headerExpandedContent) {
-            headerExpandedContent.style.display = 'none';
+            headerExpandedContent.style.display = "none";
         }
         if (overlay) {
             overlay.remove();
@@ -735,7 +910,9 @@ function toggleSidebar() {
     const mainWrapper = document.getElementById("mainWrapper");
     const headerBar = document.getElementById("headerBar");
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
-    const headerExpandedContent = document.getElementById("headerExpandedContent");
+    const headerExpandedContent = document.getElementById(
+        "headerExpandedContent"
+    );
 
     // Mobile behavior
     if (window.innerWidth <= 550) {
@@ -743,10 +920,12 @@ function toggleSidebar() {
         const isExpanded = headerBar.classList.contains("is-expanded");
 
         if (sidebarToggleBtn) {
-            sidebarToggleBtn.querySelector("i").className = isExpanded ? "ri-close-line" : "ri-menu-line";
+            sidebarToggleBtn.querySelector("i").className = isExpanded
+                ? "ri-close-line"
+                : "ri-menu-line";
         }
         if (headerExpandedContent) {
-            headerExpandedContent.style.display = isExpanded ? 'flex' : 'none';
+            headerExpandedContent.style.display = isExpanded ? "flex" : "none";
         }
 
         if (isExpanded) {
@@ -779,21 +958,145 @@ function toggleSidebar() {
             overlay.remove();
         }
         if (headerExpandedContent) {
-            headerExpandedContent.style.display = 'none';
+            headerExpandedContent.style.display = "none";
         }
     }
+}
+
+/**************************************/
+/*      ENCRYPTION/DECRYPTION         */
+/**************************************/
+
+/**
+ * Encrypts data using AES-GCM
+ * @param {string} data - Data to encrypt
+ * @param {string} secretKey - Base64 encoded secret key
+ * @returns {Promise<string>} Base64 encoded encrypted data
+ */
+async function encryptData(data, secretKey) {
+    try {
+        const encoder = new TextEncoder();
+        const dataBuffer = encoder.encode(data);
+
+        // Import the key
+        const key = await window.crypto.subtle.importKey(
+            "raw",
+            base64ToArrayBuffer(secretKey),
+            { name: "AES-GCM" },
+            false,
+            ["encrypt"]
+        );
+
+        // Generate IV
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+        // Encrypt the data
+        const encryptedBuffer = await window.crypto.subtle.encrypt(
+            {
+                name: "AES-GCM",
+                iv: iv,
+            },
+            key,
+            dataBuffer
+        );
+
+        // Combine IV and encrypted data
+        const combined = new Uint8Array(iv.length + encryptedBuffer.byteLength);
+        combined.set(iv, 0);
+        combined.set(new Uint8Array(encryptedBuffer), iv.length);
+
+        return arrayBufferToBase64(combined);
+    } catch (error) {
+        console.error("Encryption error:", error);
+        throw error;
+    }
+}
+
+/**
+ * Decrypts data using AES-GCM
+ * @param {string} encryptedData - Base64 encoded encrypted data
+ * @param {string} secretKey - Base64 encoded secret key
+ * @returns {Promise<string>} Decrypted data
+ */
+async function decryptData(encryptedData, secretKey) {
+    try {
+        // Convert base64 to array buffer
+        const combinedBuffer = base64ToArrayBuffer(encryptedData);
+
+        // Extract IV and encrypted data
+        const iv = combinedBuffer.slice(0, 12);
+        const data = combinedBuffer.slice(12);
+
+        // Import the key
+        const key = await window.crypto.subtle.importKey(
+            "raw",
+            base64ToArrayBuffer(secretKey),
+            { name: "AES-GCM" },
+            false,
+            ["decrypt"]
+        );
+
+        // Decrypt the data
+        const decryptedBuffer = await window.crypto.subtle.decrypt(
+            {
+                name: "AES-GCM",
+                iv: iv,
+            },
+            key,
+            data
+        );
+
+        // Convert to string
+        const decoder = new TextDecoder();
+        return decoder.decode(decryptedBuffer);
+    } catch (error) {
+        console.error("Decryption error:", error);
+        throw error;
+    }
+}
+
+// Helper functions
+function base64ToArrayBuffer(base64) {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
 }
 
 /**************************************/
 /* INITIALIZATION AND EVENT LISTENERS */
 /**************************************/
 
-
 /**
  * Initializes the application when DOM is loaded
  * Sets up event listeners, loads stored data, and applies themes
  */
 document.addEventListener("DOMContentLoaded", () => {
+    // Check if user is authenticated
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    if (!userInfo || !userInfo.uid) {
+        showCustomAlert(
+            "Authentication Error",
+            "Please log in to access your notes",
+            false,
+            () => {
+                window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=login";
+            }
+        );
+        return;
+    }
+
     // Load stored notes and render initial view
     notes = loadNotes();
     renderNotes();
@@ -810,7 +1113,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Set up form and dialog event listeners
     document.getElementById("noteForm").addEventListener("submit", saveNote);
-    document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
+    document
+        .getElementById("themeToggleBtn")
+        .addEventListener("click", toggleTheme);
 
     // Close dialog when clicking outside of it
     document.getElementById("noteDialog").addEventListener("click", (event) => {
@@ -830,26 +1135,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Set up header action buttons
-    document.getElementById("exportNotesBtn").addEventListener("click", exportNotes);
-    document.getElementById("importNotesBtn").addEventListener("click", () =>
-        document.getElementById("importNotesInput").click()
-    );
-    document.getElementById("importNotesInput").addEventListener("change", importNotes);
-    document.getElementById("deleteAllNotesBtn").addEventListener("click", deleteAllNotes);
+    document
+        .getElementById("exportNotesBtn")
+        .addEventListener("click", exportNotes);
+    document
+        .getElementById("importNotesBtn")
+        .addEventListener("click", () =>
+            document.getElementById("importNotesInput").click()
+        );
+    document
+        .getElementById("importNotesInput")
+        .addEventListener("change", importNotes);
+    document
+        .getElementById("deleteAllNotesBtn")
+        .addEventListener("click", deleteAllNotes);
 
     // Set up sidebar action buttons
-    document.getElementById("sidebarExportNotesBtn").addEventListener("click", exportNotes);
-    document.getElementById("sidebarImportNotesBtn").addEventListener("click", () =>
-        document.getElementById("sidebarImportNotesInput").click()
-    );
-    document.getElementById("sidebarImportNotesInput").addEventListener("change", importNotes);
-    document.getElementById("sidebarDeleteAllNotesBtn").addEventListener("click", deleteAllNotes);
+    document
+        .getElementById("sidebarExportNotesBtn")
+        .addEventListener("click", exportNotes);
+    document
+        .getElementById("sidebarImportNotesBtn")
+        .addEventListener("click", () =>
+            document.getElementById("sidebarImportNotesInput").click()
+        );
+    document
+        .getElementById("sidebarImportNotesInput")
+        .addEventListener("change", importNotes);
+    document
+        .getElementById("sidebarDeleteAllNotesBtn")
+        .addEventListener("click", deleteAllNotes);
 
     // Set up color theme picker
     document.querySelectorAll(".color-circle").forEach((circle) => {
         circle.addEventListener("click", () => {
             const color = circle.dataset.color;
-            const colorName = Object.keys(COLOR_THEMES).find((key) => COLOR_THEMES[key] === color);
+            const colorName = Object.keys(COLOR_THEMES).find(
+                (key) => COLOR_THEMES[key] === color
+            );
             if (colorName) {
                 changeColorTheme(colorName);
             }
@@ -861,4 +1184,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Set up window resize listener for responsive behavior
-window.addEventListener('resize', handleResize);
+window.addEventListener("resize", handleResize);
