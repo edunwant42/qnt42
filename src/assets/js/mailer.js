@@ -29,8 +29,8 @@ export function initContactForm({
         const message = sanitizeInput(document.getElementById("message").value);
 
         if (
-            !checkEmptyField("Full Name", fromName) ||
             !checkEmptyField("Email Address", fromEmail) ||
+            !checkEmptyField("Full Name", fromName) ||
             !checkEmptyField("Subject", subject) ||
             !checkEmptyField("Message", message) ||
             !validateEmail(fromEmail)
