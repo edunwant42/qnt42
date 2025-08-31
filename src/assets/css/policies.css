@@ -1,0 +1,246 @@
+@import url("https://fonts.googleapis.com/css2?family=Gugi&display=swap");
+
+:root {
+    --primary: #55b7fd;
+    --secondary: #209af7;
+    --primary-light: rgba(32, 154, 247, 0.06);
+    --white: #ffffff;
+    --dark: #222;
+    --text-light: #555;
+    --max-width: 900px;
+    --transition: 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Gugi", sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    color: var(--dark);
+    background: linear-gradient(135deg, var(--primary-light) 0%, #f8f9fa 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 40px;
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--primary);
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+h1::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-top: 35px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-light);
+    display: flex;
+    align-items: center;
+}
+
+h2 i {
+    margin-right: 10px;
+    color: var(--secondary);
+}
+
+h3 {
+    font-size: 1.4rem;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: var(--secondary);
+}
+
+p {
+    margin-bottom: 20px;
+    color: var(--text-light);
+}
+
+ul {
+    list-style-type: none;
+    margin-bottom: 20px;
+}
+
+li {
+    margin-bottom: 12px;
+    padding-left: 25px;
+    position: relative;
+    color: var(--text-light);
+}
+
+li::before {
+    content: "•";
+    color: var(--primary);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+a:hover {
+    color: var(--secondary);
+    text-decoration: underline;
+}
+
+.footer {
+    margin-top: 40px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    padding: 20px;
+}
+
+strong {
+    font-weight: bold;
+    color: var(--dark);
+}
+
+.effective-date {
+    font-size: 1rem;
+    color: var(--text-light);
+    background-color: var(--primary-light);
+    margin-bottom: 30px;
+    border-radius: 10px;
+    padding: 15px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.effective-date span {
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 8px 16px;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-radius: 20px;
+    text-decoration: none;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+.back-button:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    text-decoration: none;
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.highlight {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.info-box {
+    background-color: var(--primary-light);
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 30px 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 25px 15px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    .effective-date {
+        padding: 12px 15px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: none;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .back-button {
+        display: none;
+    }
+}
