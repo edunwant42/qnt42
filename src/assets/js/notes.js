@@ -755,6 +755,23 @@ function toggleTheme() {
         "theme",
         document.body.classList.contains("dark-theme") ? "dark" : "light"
     );
+    updateThemeIcon(); // Update the theme icon after switching
+}
+
+
+/**
+ *  Update the theme icon based on current theme
+ */
+function updateThemeIcon() {
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (!themeToggleBtn) return;
+
+    const isDarkTheme = document.body.classList.contains('dark-theme');
+    const icon = themeToggleBtn.querySelector('i');
+    if (icon) {
+        // If dark theme is enabled, show sun icon (switch to light) and vice versa.
+        icon.className = isDarkTheme ? 'ri-sun-line' : 'ri-moon-line';
+    }
 }
 
 /**
@@ -767,6 +784,7 @@ function applyStoredTheme() {
     } else {
         document.body.classList.remove("dark-theme");
     }
+    updateThemeIcon(); // Update the icon after applying the theme
 }
 
 /**
