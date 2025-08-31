@@ -22,7 +22,7 @@ function initRecoverOtpPage() {
         // Show loading state
         recoverButton.disabled = true;
         recoverButton.innerHTML =
-            '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing...';
+            '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing ...';
 
         // Get the email from the recover form specifically
         const emailInput = document.getElementById("recover-email");
