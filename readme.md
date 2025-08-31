@@ -2,6 +2,8 @@
   <img src="src/assets/images/logo/note-logo-blue.webp" alt="QNT42 Logo" width="100" height="100">
   <h1>QNT42 - Quick Notes Taking</h1>
   <p><em>A secure, modern web-based note-taking application with end-to-end encryption</em></p>
+
+  ![qnt42](https://socialify.git.ci/edunwant42/qnt42/image?custom_description=Quick+Notes+web+Platform&custom_language=JavaScript&description=1&font=Rokkitt&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Light)
   
   <p align="center">
     <img src="https://img.shields.io/github/last-commit/edunwant42/qnt42?style=flat-square" /> &nbsp;&nbsp;
