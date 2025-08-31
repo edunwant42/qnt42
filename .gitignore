@@ -20,9 +20,6 @@ logs
 # Ignore log files
 *.log
 
-# Ignore preview images for the current moment
-.preview/
-
 # Ignore design files for the current moment
 .design/
 
