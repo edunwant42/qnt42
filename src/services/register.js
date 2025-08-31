@@ -73,6 +73,9 @@ registerButton.addEventListener("click", async (event) => {
         createdAt: new Date().toISOString(),
       });
 
+      // Sign out the user immediately after registration
+      await auth.signOut()
+
       // Send verification email using the new system
       // Fixed: Now passing username as the third parameter
       const emailSent = await sendAccountEmail(
