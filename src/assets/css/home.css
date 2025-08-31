@@ -1,9 +1,8 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Gugi&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Gugi&display=swap");
 
 /* ===============================
-   Root Variables
-   =============================== */
+       Root Variables
+       =============================== */
 :root {
     --primary: #55b7fd;
     --secondary: #209af7;
@@ -16,8 +15,8 @@
 }
 
 /* ===============================
-   Global Styles
-   =============================== */
+       Global Styles
+       =============================== */
 * {
     margin: 0;
     padding: 0;
@@ -29,6 +28,11 @@ body {
     line-height: 1.6;
     color: var(--dark);
     background-color: var(--white);
+    overflow-x: hidden;
+}
+
+body.no-scroll {
+    overflow: hidden;
 }
 
 body.loading {
@@ -67,8 +71,8 @@ a {
 }
 
 /* ===============================
-   Navbar
-   =============================== */
+       Navbar
+       =============================== */
 .navbar {
     background: var(--white);
     padding: 1rem 0;
@@ -88,6 +92,7 @@ a {
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 0 1rem;
+    position: relative;
 }
 
 .nav-content img {
@@ -176,8 +181,8 @@ nav a.active {
 }
 
 /* ===============================
-   Hero Section
-   =============================== */
+       Hero Section
+       =============================== */
 .hero {
     background: var(--white);
     padding: 8rem 0 4rem 0;
@@ -204,8 +209,8 @@ nav a.active {
 }
 
 /* ===============================
-   About Section
-   =============================== */
+       About Section
+       =============================== */
 .about {
     background: var(--primary-light);
     padding: 4rem 0;
@@ -292,8 +297,8 @@ nav a.active {
 }
 
 /* ===============================
-   Features Section
-   =============================== */
+       Features Section
+       =============================== */
 .features {
     background: var(--white);
     padding: 4rem 0;
@@ -306,13 +311,10 @@ nav a.active {
 
 .features-container {
     display: grid;
-    /* grid-template-columns: repeat(4, 300px);
-  grid-template-rows: repeat(4, auto); */
     gap: 20px;
     max-width: 1024px;
     margin: 0 auto;
     padding: 32px;
-
     justify-content: center;
 }
 
@@ -457,8 +459,8 @@ nav a.active {
 }
 
 /* ===============================
-   Contact Section
-   =============================== */
+       Contact Section
+       =============================== */
 .contact {
     background: var(--primary-light);
     padding: 4rem 0;
@@ -493,6 +495,7 @@ nav a.active {
 
 .contact-image {
     flex: 1;
+    order: 2;
     max-width: 50%;
 }
 
@@ -577,17 +580,50 @@ nav a.active {
 }
 
 /* ===============================
-   Footer
+       Footer
    =============================== */
 .footer {
     background: var(--white);
     color: var(--text-dark);
     text-align: center;
-    padding: 1rem 0;
+    padding: 2rem 0 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.footer .author {
+.footer .container {
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer p {
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.footer-links a {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    transition: all var(--transition);
+    position: relative;
+    padding: 0.25rem 0;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.footer {
     text-decoration: none;
+    font-weight: 600;
 }
 
 .footer .author:hover {
@@ -595,49 +631,254 @@ nav a.active {
 }
 
 /* ===============================
-   Responsive Design
-   =============================== */
+       Mobile Menu Styles
+       =============================== */
+.notifications {
+    top: 85px;
+}
+
+/* Mobile menu styles */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1000;
+}
+
+.hamburger span {
+    width: 30px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 5px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: center;
+}
+
+/* Hamburger animation when active */
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Overlay for when menu is open */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* ===============================
+       Responsive Design
+       =============================== */
 
 /* Tablet Screens */
+@media (max-width: 1024px) {
+    .features-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .item:nth-child(1),
+    .item:nth-child(2),
+    .item:nth-child(3),
+    .item:nth-child(4),
+    .item:nth-child(5),
+    .item:nth-child(6),
+    .item:nth-child(7) {
+        grid-row: auto !important;
+        grid-column: auto !important;
+    }
+
+    .contact-image {
+        order: -1;
+    }
+}
 
 @media (max-width: 768px) {
     .container {
         padding: 0 1rem;
     }
 
-    /* Navbar tablet styling */
-    /* hide nav register and login buttons */
+    /* Navbar mobile styles */
+    .hamburger {
+        display: flex;
+    }
+
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 70%;
+        max-width: 300px;
+        background: var(--white);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: 80px;
+        gap: 2rem;
+        transition: right 0.3s ease-in-out;
+        z-index: 100;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    nav.mobile-menu-open {
+        right: 0 !important;
+    }
+
+    /* Hide nav indicator on mobile */
+    .nav-indicator {
+        display: none !important;
+    }
+
     .auth-buttons {
         display: none;
     }
 
+    .mobile-auth {
+        display: flex !important;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    /* Navbar tablet styling */
     .nav-link {
         padding: 0;
-        /* adjust font size and weight */
         font-weight: 500;
     }
 
+    /* Hero section */
     .hero-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .hero-text {
+        flex-direction: column-reverse;
         text-align: center;
+        padding: 0 1rem;
     }
 
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+
+    /* About section */
     .about-content {
         flex-direction: column;
-        align-items: center;
+        padding: 1rem;
     }
 
+    .about-text,
+    .about-image {
+        max-width: 100%;
+    }
+
+    /* Features section */
+    .features-container {
+        grid-template-columns: 1fr !important;
+        padding: 1rem;
+    }
+
+    /* Contact section */
     .contact-content {
         flex-direction: column;
-        align-items: center;
+        padding: 1rem;
     }
 
     .contact-text,
     .contact-image {
         max-width: 100%;
+    }
+
+    .input-row {
+        flex-direction: column;
+    }
+
+        .footer {
+        padding: 1.5rem 0;
+    }
+    
+    .footer-links {
+        gap: 1rem;
+    }
+    
+    .footer-links a {
+        font-size: 0.9rem;
+    }
+    
+    .footer-links a:not(:last-child)::after {
+        right: -0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .hero {
+        padding: 6rem 0 2rem 0;
+    }
+
+    .hero-text h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-text p {
+        font-size: 1rem;
+    }
+
+    .about,
+    .contact {
+        padding: 2rem 0;
+    }
+
+    .about h2,
+    .contact h2 {
+        margin-top: 2rem;
+    }
+
+    .features {
+        padding: 2rem 0;
+    }
+
+    .item {
+        padding: 1rem;
+    }
+
+    .footer .container {
+        gap: 1rem;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .footer-links a:not(:last-child)::after {
+        display: none;
+    }
+    
+    .footer p {
+        font-size: 0.9rem;
     }
 }
