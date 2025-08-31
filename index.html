@@ -14,6 +14,12 @@
   <link rel="stylesheet" href="/qnt42/src/assets/css/notifier.css" />
   <script src="/qnt42/src/assets/js/notifier.js" defer></script>
 
+  <style>
+    .notifications{
+      top: 85px;
+    }
+  </style>
+
 </head>
 
 <body>
@@ -182,19 +188,19 @@
           <div class="input-row">
             <div class="input-wrapper">
               <i class="icon-mail"></i>
-              <input type="email" id="from_email" name="from_email" placeholder="Email Address" />
+              <input type="email" id="from_email" name="from_email" placeholder="Email Address" autocomplete="off"/>
             </div>
             <div class="input-wrapper">
               <i class="icon-user"></i>
-              <input type="text" id="from_name" name="from_name" placeholder="Full Name" />
+              <input type="text" id="from_name" name="from_name" placeholder="Full Name" autocomplete="off"/>
             </div>
           </div>
           <div class="input-wrapper">
             <i class="icon-mail-question-mark"></i>
-            <input type="text" id="subject" name="subject" placeholder="Subject" />
+            <input type="text" id="subject" name="subject" placeholder="Subject" autocomplete="off"/>
           </div>
 
-          <textarea id="message" name="message" placeholder="Your message"></textarea>
+          <textarea id="message" name="message" placeholder="Your message" autocomplete="off"></textarea>
           <button type="submit" id="submit-btn">Submit</button>
         </form>
       </div>
