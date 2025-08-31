@@ -1,13 +1,14 @@
 /**
  * Firebase configuration
  */
-export const firebaseConfig = {
-  apiKey: "AIzaSyCZ8xN6-uAkTmVNHQy-PAjPcAEQ1OG6uUA",
-  authDomain: "qnt42-9639f.firebaseapp.com",
-  projectId: "qnt42-9639f",
-  storageBucket: "qnt42-9639f.firebasestorage.app",
-  messagingSenderId: "54787094346",
-  appId: "1:531135208207:web:c09fa24da5c643f310fc7a",
+const firebaseConfig = {
+  apiKey: "AIzaSyD84LwFVcbIq57KmM7ooRbPymInBn7yqvE",
+  authDomain: "qnt42-a27f3.firebaseapp.com",
+  projectId: "qnt42-a27f3",
+  storageBucket: "qnt42-a27f3.firebasestorage.app",
+  messagingSenderId: "422487596465",
+  appId: "1:422487596465:web:216b2abb2f1d9838a3f190",
+  measurementId: "G-L93ZY6JGC5",
 };
 
 /**
@@ -15,17 +16,17 @@ export const firebaseConfig = {
  */
 export const mailConfig = {
   contact: {
-    PublicKey: "2p52LAUNd4eyqfGdw",
+    PublicKey: "Qk6vUWdegzmDE4u1K",
     ServiceId: "srvc-contact_qnt42",
     Templates: { contact: "tmpl-contact_qnt42" },
   },
   Updates: {
-    PublicKey: "2hmaWu2GDSHi0_nMQ",
+    PublicKey: "1UqnFbpMg_QSmOCRK",
     ServiceId: "srvc-updates_qnt42",
     Templates: { welcome: "tmpl-welcome_qnt42" },
   },
   Security: {
-    PublicKey: "kVSEWbzKqZpX9eONi",
+    PublicKey: "SNi3LDlh5aTjxJ3t6",
     ServiceId: "srvc-security_qnt42",
     Templates: {
       reset: "tmpl-reset_qnt42",
@@ -33,7 +34,7 @@ export const mailConfig = {
     },
   },
   Support: {
-    PublicKey: "xLr6UrF_Q0bebMvzg",
+    PublicKey: "3MXQKCLHCkhpcCrEq",
     ServiceId: "srvc-support_qnt42",
     Templates: {
       forgot: "tmpl-forgot_qnt42",
@@ -55,7 +56,7 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   verifyPasswordResetCode,
-  updatePassword
+  updatePassword,
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
