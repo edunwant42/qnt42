@@ -14,7 +14,7 @@ function initResetPasswordPage() {
             
             // Show loading state
             resetButton.disabled = true;
-            resetButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing...';
+            resetButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing ...';
             
             // Simulate processing time
             setTimeout(() => {
