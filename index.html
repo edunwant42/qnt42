@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="/qnt42/src/assets/css/home.css">
   <script type="module" src="/qnt42/src/assets/js/auth-guard.js" defer></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 
 <body>
@@ -216,6 +217,18 @@
   </footer>
 
   <script src="/qnt42/src/assets/js/home.js"></script>
+  <script type="module">
+    import { initContactForm } from "/qnt42/src/assets/js/mailer.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Initialize contact form
+      initContactForm({
+        formId: "contact-form",
+        submitBtnId: "submit-btn",
+        reloadAfterSend: false
+      });
+    });
+  </script>
 </body>
 
 </html>
