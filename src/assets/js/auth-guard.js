@@ -16,7 +16,7 @@ const PAGE_TYPES = {
 // Canonical routes used across the app
 const ROUTES = {
     DASHBOARD: '/qnt42/src/pages/dashboard.html',
-    HOME: '/'
+    HOME: '/qnt42/'
 };
 
 /**
