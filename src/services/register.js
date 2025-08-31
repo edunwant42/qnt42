@@ -23,6 +23,9 @@ const registerButton = document.getElementById("register-btn");
 registerButton.addEventListener("click", async (event) => {
   event.preventDefault();
 
+  // Set registration flag to prevent auth guard interference
+  window.isRegistering = true;
+
   // Store original button content
   const originalText = registerButton.innerHTML;
   const originalDisabled = registerButton.disabled;
@@ -74,10 +77,12 @@ registerButton.addEventListener("click", async (event) => {
       });
 
       // Sign out the user immediately after registration
-      await auth.signOut()
+      await auth.signOut();
+
+      // Add a small delay to ensure auth state is properly updated
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Send verification email using the new system
-      // Fixed: Now passing username as the third parameter
       const emailSent = await sendAccountEmail(
         "verifyAccount",
         email,
@@ -91,7 +96,7 @@ registerButton.addEventListener("click", async (event) => {
       if (emailSent) {
         sessionStorage.setItem(
           "info",
-          "Info: Registration successful! A verification OTP has been sent to your email. The code will expire in 10 minutes."
+          "Info: Registration successful! A verification OTP has been sent to your email. The code will expire in 15 minutes."
         );
         window.location.href =
           "/qnt42/src/pages/auth/secure.html?action=verify&uid=" + uid;
@@ -130,10 +135,14 @@ registerButton.addEventListener("click", async (event) => {
 
       sessionStorage.setItem(notifType, userMessage);
       window.location.href = redirectTo;
+    } finally {
+      // Clear registration flag
+      window.isRegistering = false;
     }
   } else {
     // Reset button if validation fails
     registerButton.disabled = originalDisabled;
     registerButton.innerHTML = originalText;
+    window.isRegistering = false;
   }
 });
