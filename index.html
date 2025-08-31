@@ -7,22 +7,16 @@
   <title>QNT42 - Home</title>
   <link rel="icon" type="image/x-icon" href="/qnt42/src/assets/images/logo/favicon-blue.ico" />
   <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/qnt42/src/assets/css/home.css" />
-  <link rel="stylesheet" href="/qnt42/src/assets/css/notifier.css">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="/qnt42/src/assets/js/notifier.js" defer></script>
-  <script src="/qnt42/src/assets/js/home.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="/qnt42/src/assets/css/home.css">
   <script type="module" src="/qnt42/src/assets/js/auth-guard.js" defer></script>
-  <style>
-    .notifications {
-      top: 85px;
-    }
-  </style>
 </head>
 
 <body>
   <ul class="notifications"></ul>
+  <!-- Overlay for mobile menu -->
+  <div class="overlay" id="overlay"></div>
+
   <!-- Navbar -->
   <header class="navbar">
     <div class="container nav-content">
@@ -31,20 +25,34 @@
         QNT
         <span>42</span>
       </div>
-      <nav>
+
+      <button class="hamburger" id="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="main-nav">
         <a href="#" data-target="hero" class="nav-link active">Home</a>
         <a href="#" data-target="about" class="nav-link">About</a>
         <a href="#" data-target="features" class="nav-link">Features</a>
         <a href="#" data-target="contact" class="nav-link">Contact</a>
         <div class="nav-indicator"></div>
+
+        <div class="auth-buttons mobile-auth" style="display: none">
+          <a href="/qnt42/src/pages/auth/authenticate.html?action=login" class="btn secondary">Login</a>
+          <a href="/qnt42/src/pages/auth/authenticate.html?action=register" class="btn primary">Sign Up</a>
+        </div>
       </nav>
-      <div class="auth-buttons">
+
+      <div class="auth-buttons desktop-auth">
         <a href="/qnt42/src/pages/auth/authenticate.html?action=login" class="btn secondary">Login</a>
         <a href="/qnt42/src/pages/auth/authenticate.html?action=register" class="btn primary">Sign Up</a>
       </div>
     </div>
   </header>
 
+  <!-- The rest of your HTML remains the same -->
   <!-- Hero Section -->
   <section id="hero" class="hero">
     <div class="container hero-content">
@@ -57,20 +65,20 @@
         </p>
       </div>
       <div class="hero-image">
-        <img src="/qnt42/src/assets/images/Hero 1.webp" alt="Hero Illustration" />
+        <img src="/qnt42/src/assets/images/illustrations/Hero 1.webp" alt="Hero Illustration" />
       </div>
     </div>
   </section>
 
   <!-- About Section -->
   <section id="about" class="about">
-    <img src="/qnt42/src/assets/images/Wave.svg" alt="Wave Decoration" class="wave-decoration" />
+    <img src="/qnt42/src/assets/images/illustrations/Wave.svg" alt="Wave Decoration" class="wave-decoration" />
+    <h2>About <span class="highlight">QNT42</span></h2>
     <div class="container about-content">
       <div class="about-image">
-        <img src="/qnt42/src/assets/images/Hero 2.webp" alt="About Illustration" />
+        <img src="/qnt42/src/assets/images/illustrations/Hero 2.webp" alt="About Illustration" />
       </div>
       <div class="about-text">
-        <h2>About <span class="highlight">QNT42</span></h2>
         <p>
           QNT42 (Quick Notes Taking) is a lightweight, secure, and efficient
           note-taking web application designed for fast and easy note
@@ -155,7 +163,7 @@
 
   <!-- Contact Section -->
   <section id="contact" class="contact">
-    <img src="/qnt42/src/assets/images/Wave.svg" alt="Wave Decoration" class="wave-decoration" />
+    <img src="/qnt42/src/assets/images/illustrations/Wave.svg" alt="Wave Decoration" class="wave-decoration" />
     <h2>Contact <span class="highlight">Us</span></h2>
     <div class="container contact-content">
       <div class="contact-text">
@@ -187,7 +195,7 @@
         </form>
       </div>
       <div class="contact-image">
-        <img src="/qnt42/src/assets/images/Hero 3.webp" alt="Contact Illustration" />
+        <img src="/qnt42/src/assets/images/illustrations/Hero 3.webp" alt="Contact Illustration" />
       </div>
     </div>
   </section>
@@ -197,21 +205,17 @@
     <div class="container">
       <p>
         © 2025 <span class="highlight">QNT42</span>. All rights reserved.
-        Designed & developed by
-        <a class="author" href="https://edunwant42.tech">ababdelo</a>.
       </p>
+      <div class="footer-links">
+        <a href="/qnt42/src/pages/policies/faq.html">FAQ</a>
+        <a href="/qnt42/src/pages/policies/termsOfService.html">Terms of Service</a>
+        <a href="/qnt42/src/pages/policies/privacyPolicy.html">Privacy Policy</a>
+        <a class="author" href="https://ed42.tech" target="_blank">Author</a>
+      </div>
     </div>
   </footer>
-  <script type="module">
-    import { initContactForm } from "/qnt42/src/assets/js/mailer.js";
 
-    document.addEventListener("DOMContentLoaded", () => {
-      initContactForm({
-        formId: "contact-form",
-        submitBtnId: "submit-btn",
-      });
-    });
-  </script>
+  <script src="/qnt42/src/assets/js/home.js"></script>
 </body>
 
 </html>
