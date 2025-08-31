@@ -28,7 +28,7 @@ loginButton.addEventListener("click", async (event) => {
 
   // Show loading state
   loginButton.disabled = true;
-  loginButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Signing in...';
+  loginButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Signing in ...';
 
   // Capture and sanitize input values
   const email = sanitizeInput(document.getElementById("sign-in_email").value);
@@ -80,13 +80,14 @@ loginButton.addEventListener("click", async (event) => {
       return;
     }
 
-    const username = data.username || "!F";
-    const secretKey = data.secretKey || "!F";
+    const username = data.username || "";
+    const secretKey = data.secretKey || "";
 
     // Persist safe info in localStorage (so it survives reloads)
     localStorage.setItem("user-info", JSON.stringify({
+      uid: userCredential.user.uid,
       username,
-      secretKey,
+      secretKey
     }));
 
     // Redirect to dashboard
