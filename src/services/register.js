@@ -30,7 +30,7 @@ registerButton.addEventListener("click", async (event) => {
   // Show loading state
   registerButton.disabled = true;
   registerButton.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing...';
+    '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing ...';
 
   const username = sanitizeInput(document.getElementById("username").value);
   const email = sanitizeInput(document.getElementById("sign-up_email").value);
