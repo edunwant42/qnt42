@@ -34,7 +34,7 @@
       </button>
       <div class="search-wrapper">
         <input type="search" id="searchInput" placeholder="Search notes..." aria-label="Search notes"
-          class="search-input" />
+          class="search-input" autocomplete="off" />
         <i class="ri-search-2-line search-icon"></i>
       </div>
       <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Dark/Light Mode">
@@ -160,15 +160,15 @@
       <form id="noteForm">
         <div class="form-group">
           <label for="noteTitle" class="form-label">Title</label>
-          <input type="text" id="noteTitle" class="form-input" required />
+          <input type="text" id="noteTitle" class="form-input" required autocomplete="off"/>
         </div>
         <div class="form-group">
           <label for="noteContent" class="form-label">Content</label>
-          <textarea id="noteContent" class="form-textarea" required></textarea>
+          <textarea id="noteContent" class="form-textarea" required autocomplete="off"></textarea>
         </div>
         <div class="form-group">
           <label for="noteKeywords" class="form-label">Keywords (comma separated)</label>
-          <input type="text" id="noteKeywords" class="form-input" placeholder="e.g. work, ideas, personal" />
+          <input type="text" id="noteKeywords" class="form-input" placeholder="e.g. work, ideas, personal" autocomplete="off"/>
         </div>
         <div class="dialog-actions">
           <button type="button" class="cancel-btn" onclick="closeNoteDialog()">
