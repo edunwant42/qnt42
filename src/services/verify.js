@@ -151,7 +151,7 @@ function initVerificationPage() {
 
         // Show loading state
         verifyButton.disabled = true;
-        verifyButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Verifying...';
+        verifyButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Verifying ...';
 
         // Check if UID exists before proceeding
         if (!uid) {
