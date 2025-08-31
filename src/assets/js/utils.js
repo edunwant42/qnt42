@@ -1,4 +1,4 @@
-import { mailConfig } from "./config.js";
+import { mailConfig } from "/qnt42/src/assets/js/config.js";
 
 /**
  * Validate and sanitize input data.
@@ -113,7 +113,7 @@ export function validatePassword(password) {
             "warning",
             `Warning: Password must be at least ${minLength} characters long.`
         );
-        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
         return false;
     }
     if (!hasUppercase) {
@@ -121,7 +121,7 @@ export function validatePassword(password) {
             "warning",
             "Warning: Password must include at least one uppercase letter."
         );
-        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
         return false;
     }
     if (!hasLowercase) {
@@ -129,7 +129,7 @@ export function validatePassword(password) {
             "warning",
             "Warning: Password must include at least one lowercase letter."
         );
-        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
         return false;
     }
     if (!hasNumber) {
@@ -137,7 +137,7 @@ export function validatePassword(password) {
             "warning",
             "Warning: Password must include at least one number."
         );
-        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
         return false;
     }
     if (!hasSpecialChar) {
@@ -145,7 +145,7 @@ export function validatePassword(password) {
             "warning",
             "Warning: Password must include at least one special character."
         );
-        window.location.href = "/qnt42/qnt42/src/pages/auth/register";
+        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
         return false;
     }
 
@@ -397,10 +397,10 @@ export function startInactivityTimer() {
     document.addEventListener("click", resetTimer);
 
     /*
-        document.addEventListener("mousemove", resetTimer);
-        document.addEventListener("scroll", resetTimer);
-        document.addEventListener("touchstart", resetTimer);
-        */
+          document.addEventListener("mousemove", resetTimer);
+          document.addEventListener("scroll", resetTimer);
+          document.addEventListener("touchstart", resetTimer);
+          */
 
     // Start first timer
     resetTimer();
@@ -576,5 +576,132 @@ export function storeEmailError(error) {
         );
     } catch (e) {
         console.error("Failed to store email error:", e);
+    }
+}
+
+/**
+ * Encrypts data using AES-GCM
+ * @param {string} data - Data to encrypt
+ * @param {string} secretKey - Base64 encoded secret key
+ * @returns {Promise<string>} Base64 encoded encrypted data
+ */
+export async function encryptData(data, secretKey) {
+    try {
+        const encoder = new TextEncoder();
+        const dataBuffer = encoder.encode(data);
+
+        // Import the key
+        const key = await window.crypto.subtle.importKey(
+            "raw",
+            base64ToArrayBuffer(secretKey),
+            { name: "AES-GCM" },
+            false,
+            ["encrypt"]
+        );
+
+        // Generate IV
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+        // Encrypt the data
+        const encryptedBuffer = await window.crypto.subtle.encrypt(
+            {
+                name: "AES-GCM",
+                iv: iv,
+            },
+            key,
+            dataBuffer
+        );
+
+        // Combine IV and encrypted data
+        const combined = new Uint8Array(iv.length + encryptedBuffer.byteLength);
+        combined.set(iv, 0);
+        combined.set(new Uint8Array(encryptedBuffer), iv.length);
+
+        return arrayBufferToBase64(combined);
+    } catch (error) {
+        console.error("Encryption error:", error);
+        throw error;
+    }
+}
+
+/**
+ * Decrypts data using AES-GCM
+ * @param {string} encryptedData - Base64 encoded encrypted data
+ * @param {string} secretKey - Base64 encoded secret key
+ * @returns {Promise<string>} Decrypted data
+ */
+export async function decryptData(encryptedData, secretKey) {
+    try {
+        // Convert base64 to array buffer
+        const combinedBuffer = base64ToArrayBuffer(encryptedData);
+
+        // Extract IV and encrypted data
+        const iv = combinedBuffer.slice(0, 12);
+        const data = combinedBuffer.slice(12);
+
+        // Import the key
+        const key = await window.crypto.subtle.importKey(
+            "raw",
+            base64ToArrayBuffer(secretKey),
+            { name: "AES-GCM" },
+            false,
+            ["decrypt"]
+        );
+
+        // Decrypt the data
+        const decryptedBuffer = await window.crypto.subtle.decrypt(
+            {
+                name: "AES-GCM",
+                iv: iv,
+            },
+            key,
+            data
+        );
+
+        // Convert to string
+        const decoder = new TextDecoder();
+        return decoder.decode(decryptedBuffer);
+    } catch (error) {
+        console.error("Decryption error:", error);
+        throw error;
+    }
+}
+
+/**
+ * Converts a Base64 string to an ArrayBuffer.
+ * @param {*} base64 
+ * @returns 
+ */
+function base64ToArrayBuffer(base64) {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+/**
+ * Converts an ArrayBuffer to a Base64 string.
+ * @param {*} buffer 
+ * @returns 
+ */
+function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+/**
+ * Updates the copyright year dynamically.
+ */
+export function updateCopyrightYear() {
+    const currentYearSpan = document.getElementById("currentYear");
+    if (currentYearSpan) {
+        const currentYear = new Date().getFullYear();
+        currentYearSpan.textContent = currentYear;
     }
 }
