@@ -3,7 +3,7 @@ import {
     checkEmptyField,
     validateEmail,
     sendTemplateEmail,
-} from "./utils.js";
+} from "/qnt42/src/assets/js/utils.js";
 
 /**
  * Initialize contact form with EmailJS
