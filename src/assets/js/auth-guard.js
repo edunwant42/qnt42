@@ -16,13 +16,7 @@ const PAGE_TYPES = {
 // Canonical routes used across the app
 const ROUTES = {
     DASHBOARD: '/qnt42/src/pages/dashboard.html',
-    LOGIN: '/qnt42/src/pages/auth/authenticate.html?action=login',
-    REGISTER: '/qnt42/src/pages/auth/authenticate.html?action=register',
-    FORGOT_PASSWORD: '/qnt42/src/pages/auth/recover.html?action=forgot',
-    RECOVER_OTP: '/qnt42/src/pages/auth/recover.html?action=recover',
-    RESET_PASSWORD: '/qnt42/src/pages/auth/secure.html?action=reset',
-    VERIFY_ACCOUNT: '/qnt42/src/pages/auth/secure.html?action=verify',
-    HOME: '/qnt42/'
+    HOME: '/'
 };
 
 /**
@@ -31,19 +25,29 @@ const ROUTES = {
  */
 function getCurrentPageType() {
     const path = window.location.pathname.toLowerCase();
+    const searchParams = new URLSearchParams(window.location.search);
+    const action = searchParams.get('action');
 
     // Protected dashboard pages
     if (path.includes('/pages/dashboard.html')) {
         return PAGE_TYPES.AUTH_ONLY;
     }
 
-    // Guest-only pages (authenticate, recover, secure, index/)
+    // Guest-only pages
     if (
-        path.includes('/auth/authenticate.html') ||
-        path.includes('/auth/recover.html') ||
-        path.includes('/auth/secure.html') ||
+        // Authentication pages
+        (path.includes('authenticate.html') && 
+         ['login', 'register'].includes(action)) ||
+        (path.includes('secure.html') && 
+         ['verify', 'reset'].includes(action)) ||
+        (path.includes('recover.html') && 
+         ['forgot', 'request'].includes(action)) ||
+        // Home and policy pages
         path === '/qnt42/' ||
-        path.includes('index.html')
+        path.includes('index.html') ||
+        path.includes('faq.html') ||
+        path.includes('termsofservice.html') ||
+        path.includes('privacypolicy.html')
     ) {
         return PAGE_TYPES.GUEST_ONLY;
     }
@@ -83,8 +87,8 @@ function initAuthGuard() {
             case PAGE_TYPES.AUTH_ONLY:
                 if (!user) {
                     sessionStorage.setItem("info", "Info: You must be logged in to access the desired page.");
-                    console.log('Redirecting unauthenticated user to login.');
-                    redirectTo(ROUTES.LOGIN);
+                    console.log('Redirecting unauthenticated user to home.');
+                    redirectTo(ROUTES.HOME);
                     return;
                 } else {
                     const existing = localStorage.getItem("user-info");
