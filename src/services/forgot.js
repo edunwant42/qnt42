@@ -14,7 +14,7 @@ function initForgotPasswordPage() {
 
         // Show loading state
         forgotButton.disabled = true;
-        forgotButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing...';
+        forgotButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing ...';
 
         const email = sanitizeInput(document.getElementById("forgot-email").value);
 
