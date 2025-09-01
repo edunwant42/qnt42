@@ -36,18 +36,33 @@ function loadNotes() {
     const notesKey = getNotesKey();
     if (!notesKey) return [];
 
-    const savedNotes = localStorage.getItem(notesKey);
-    return savedNotes ? JSON.parse(savedNotes) : [];
+    const savedData = localStorage.getItem(notesKey);
+    if (!savedData) return [];
+
+    const data = JSON.parse(savedData);
+
+    // Return just the notes array (excluding preferences)
+    return Array.isArray(data) ? data : data.notes || [];
 }
 
 /**
- * Saves notes array to localStorage for the current user
+ * Saves notes array and preserve themes preferences to localStorage for the current user
  */
 function saveNotes() {
     const notesKey = getNotesKey();
     if (!notesKey) return;
 
-    localStorage.setItem(notesKey, JSON.stringify(notes));
+    // Get existing data to preserve preferences
+    const existingData = JSON.parse(localStorage.getItem(notesKey)) || {};
+    const preferences = existingData.preferences || {};
+
+    // Create new data structure with notes and preferences
+    const dataToSave = {
+        notes: notes,
+        preferences: preferences,
+    };
+
+    localStorage.setItem(notesKey, JSON.stringify(dataToSave));
 }
 
 /**
@@ -393,7 +408,7 @@ async function renderNotes(filteredNotes) {
         container.style.justifyContent = "center";
         container.style.alignItems = "center";
 
-        container.innerHTML = ` 
+        container.innerHTML = `
                 <div class="empty-state"> 
                     <img class="no-notes-image" src="/qnt42/src/assets/images/illustrations/no-item.webp" alt="No Notes" /> 
                     <p>${currentFilter === "archived"
@@ -725,7 +740,9 @@ async function exportNotes() {
 
     // Create and download JSON file
     const dataStr = JSON.stringify(notes, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
+    const blob = new Blob([dataStr], {
+        type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -837,17 +854,47 @@ function importNotes(event) {
 /**************************************/
 
 /**
+ * Gets the user's theme preferences from localStorage
+ * @returns {Object} - The theme preferences object
+ */
+function getThemePreferences() {
+    const notesKey = getNotesKey();
+    if (!notesKey) return { theme: "light", colorTheme: "blue" };
+
+    const notesData = JSON.parse(localStorage.getItem(notesKey)) || {};
+    return notesData.preferences || { theme: "light", colorTheme: "blue" };
+}
+
+/**
+ * Saves the user's theme preferences to localStorage
+ * @param {string} themeType - The type of theme (light or dark)
+ * @param {string} colorTheme - The name of the color theme
+ * @returns {void}
+ */
+function saveThemePreferences(themeType, colorTheme) {
+    const notesKey = getNotesKey();
+    if (!notesKey) return;
+
+    // Get existing notes data
+    const notesData = JSON.parse(localStorage.getItem(notesKey)) || {};
+
+    // Add/update preferences
+    notesData.preferences = {
+        theme: themeType,
+        colorTheme: colorTheme,
+    };
+
+    // Save back to localStorage
+    localStorage.setItem(notesKey, JSON.stringify(notesData));
+}
+
+/**
  * Updates user info with theme preferences
  * @param {string} themeType - 'light' or 'dark'
  * @param {string} colorTheme - Color theme name
  */
 function updateUserThemePreferences(themeType, colorTheme) {
-    const userInfo = JSON.parse(localStorage.getItem("user-info"));
-    if (userInfo) {
-        userInfo.theme = themeType;
-        userInfo.colorTheme = colorTheme;
-        localStorage.setItem("user-info", JSON.stringify(userInfo));
-    }
+    saveThemePreferences(themeType, colorTheme);
 }
 
 /**
@@ -857,16 +904,15 @@ function toggleTheme() {
     closeExpandedHeader();
     document.body.classList.toggle("dark-theme");
 
-    // Save theme preference to user info
+    // Save theme preference
     const themeType = document.body.classList.contains("dark-theme")
         ? "dark"
         : "light";
-    const userInfo = JSON.parse(localStorage.getItem("user-info"));
-    const colorTheme =
-        userInfo && userInfo.colorTheme ? userInfo.colorTheme : "blue";
+    const preferences = getThemePreferences();
+    const colorTheme = preferences.colorTheme || "blue";
+    saveThemePreferences(themeType, colorTheme);
 
-    updateUserThemePreferences(themeType, colorTheme);
-    updateThemeIcon(); // Update the theme icon after switching
+    updateThemeIcon();
 }
 
 /**
@@ -888,15 +934,15 @@ function updateThemeIcon() {
  * Applies the stored theme preference on page load
  */
 function applyStoredTheme() {
-    const userInfo = JSON.parse(localStorage.getItem("user-info"));
-    const storedTheme = userInfo && userInfo.theme ? userInfo.theme : "light";
+    const preferences = getThemePreferences();
+    const storedTheme = preferences.theme || "light";
 
     if (storedTheme === "dark") {
         document.body.classList.add("dark-theme");
     } else {
         document.body.classList.remove("dark-theme");
     }
-    updateThemeIcon(); // Update the icon after applying the theme
+    updateThemeIcon();
 }
 
 /**
@@ -914,11 +960,11 @@ function changeColorTheme(colorName) {
     // Apply new color theme
     document.body.classList.add(`${colorName}-theme`);
 
-    // Save color theme preference to user info
-    const userInfo = JSON.parse(localStorage.getItem("user-info"));
-    const themeType = userInfo && userInfo.theme ? userInfo.theme : "light";
-
-    updateUserThemePreferences(themeType, colorName);
+    // Save color theme preference
+    const themeType = document.body.classList.contains("dark-theme")
+        ? "dark"
+        : "light";
+    saveThemePreferences(themeType, colorName);
     updateFaviconAndLogo(colorName);
 
     // Update color picker UI
@@ -935,9 +981,8 @@ function changeColorTheme(colorName) {
  * Applies the stored color theme preference on page load
  */
 function applyStoredColorTheme() {
-    const userInfo = JSON.parse(localStorage.getItem("user-info"));
-    const storedColorTheme =
-        userInfo && userInfo.colorTheme ? userInfo.colorTheme : "blue";
+    const preferences = getThemePreferences();
+    const storedColorTheme = preferences.colorTheme || "blue";
 
     changeColorTheme(storedColorTheme);
 }
@@ -1116,7 +1161,9 @@ async function encryptData(data, secretKey) {
         const key = await window.crypto.subtle.importKey(
             "raw",
             base64ToArrayBuffer(secretKey),
-            { name: "AES-GCM" },
+            {
+                name: "AES-GCM",
+            },
             false,
             ["encrypt"]
         );
@@ -1165,7 +1212,9 @@ async function decryptData(encryptedData, secretKey) {
         const key = await window.crypto.subtle.importKey(
             "raw",
             base64ToArrayBuffer(secretKey),
-            { name: "AES-GCM" },
+            {
+                name: "AES-GCM",
+            },
             false,
             ["decrypt"]
         );
@@ -1247,8 +1296,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             "Please log in to access your notes",
             false,
             () => {
-                window.location.href =
-                    "/qnt42/src/pages/auth/authenticate.html?action=login";
+                window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=login";
             }
         );
         return;
