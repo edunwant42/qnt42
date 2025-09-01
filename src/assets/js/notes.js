@@ -1,8 +1,16 @@
+
 // Global state variables
 let notes = []; // Array to store all notes
 let editingNoteId = null; // ID of the note currently being edited
 let currentFilter = "all"; // Current filter view: "all", "archived", or "statistics"
 let searchIndex = {}; // Store decrypted searchable content for faster searching
+
+// Character limit constants
+const CHAR_LIMITS = {
+    TITLE: 100,
+    CONTENT: 2500,
+    KEYWORDS: 5
+};
 
 // Color theme configuration for the application
 const COLOR_THEMES = {
@@ -372,6 +380,7 @@ async function renderNotes(filteredNotes) {
                             <h3>Unique Keywords</h3> 
                             <p class="stat-number" data-value="${keywords}">0</p> 
                         </div> 
+                        
                     </div> 
                 </div> 
             `;
@@ -529,6 +538,139 @@ async function renderNotes(filteredNotes) {
 }
 
 /**************************************/
+/*    CHARACTER COUNT FUNCTIONS      */
+/**************************************/
+
+/**
+ * Sets up character counters for note form fields
+ */
+function setupCharacterCounters() {
+    const titleInput = document.getElementById('noteTitle');
+    const contentInput = document.getElementById('noteContent');
+    const keywordsInput = document.getElementById('noteKeywords');
+
+    // Set up title counter and enforcement
+    titleInput.addEventListener('input', function () {
+        updateCharCounter(this, 'titleCharCount', CHAR_LIMITS.TITLE);
+        enforceCharLimit({ target: this }, CHAR_LIMITS.TITLE);
+    });
+
+    // Set up content counter and enforcement
+    contentInput.addEventListener('input', function () {
+        updateCharCounter(this, 'contentCharCount', CHAR_LIMITS.CONTENT);
+        enforceCharLimit({ target: this }, CHAR_LIMITS.CONTENT);
+    });
+
+    // Set up keywords counter and enforcement
+    keywordsInput.addEventListener('input', function () {
+        updateKeywordCounter(this, 'keywordCount', CHAR_LIMITS.KEYWORDS);
+        enforceKeywordLimit({ target: this }, CHAR_LIMITS.KEYWORDS);
+    });
+}
+
+/**
+ * Updates character counter for a field
+ * @param {HTMLElement} inputElement - The input/textarea element
+ * @param {string} counterId - The ID of the counter element
+ * @param {number} limit - The character limit
+ */
+function updateCharCounter(inputElement, counterId, limit) {
+    const counter = document.getElementById(counterId);
+    const currentLength = inputElement.value.length;
+
+    counter.textContent = currentLength;
+
+    // Apply exceeded style if over limit
+    if (currentLength > limit) {
+        counter.parentElement.classList.add('exceeded');
+        inputElement.classList.add('exceeded');
+    } else {
+        counter.parentElement.classList.remove('exceeded');
+        inputElement.classList.remove('exceeded');
+    }
+}
+
+/**
+ * Updates keyword counter
+ * @param {HTMLElement} inputElement - The keywords input element
+ * @param {string} counterId - The ID of the counter element
+ * @param {number} limit - The keyword limit
+ */
+function updateKeywordCounter(inputElement, counterId, limit) {
+    const counter = document.getElementById(counterId);
+    const keywords = inputElement.value.split(',')
+        .map(keyword => keyword.trim())
+        .filter(keyword => keyword !== '');
+
+    const keywordCount = keywords.length;
+    counter.textContent = keywordCount;
+
+    // Apply exceeded style if over limit
+    if (keywordCount > limit) {
+        counter.parentElement.classList.add('exceeded');
+        inputElement.classList.add('exceeded');
+    } else {
+        counter.parentElement.classList.remove('exceeded');
+        inputElement.classList.remove('exceeded');
+    }
+}
+
+/**
+ * Prevents input beyond the character limit
+ * @param {Event} e - The input event
+ * @param {number} limit - The character limit
+ */
+function enforceCharLimit(e, limit) {
+    if (e.target.value.length > limit) {
+        e.target.value = e.target.value.substring(0, limit);
+        // Trigger input event to update counter
+        const event = new Event('input', { bubbles: true });
+        e.target.dispatchEvent(event);
+    }
+}
+
+/**
+ * Prevents adding more than the keyword limit
+ * @param {Event} e - The input event
+ * @param {number} limit - The keyword limit
+ */
+function enforceKeywordLimit(e, limit) {
+    const keywords = e.target.value.split(',')
+        .map(keyword => keyword.trim())
+        .filter(keyword => keyword !== '');
+
+    if (keywords.length > limit) {
+        // Keep only the first 'limit' number of keywords
+        const limitedKeywords = keywords.slice(0, limit).join(', ');
+        e.target.value = limitedKeywords;
+
+        // Trigger input event to update counter
+        const event = new Event('input', { bubbles: true });
+        e.target.dispatchEvent(event);
+    }
+}
+
+/**
+ * Resets all character counters
+ */
+function resetCharacterCounters() {
+    // Reset title counter
+    document.getElementById('titleCharCount').textContent = '0';
+    document.getElementById('titleCharCount').parentElement.classList.remove('exceeded');
+    document.getElementById('noteTitle').classList.remove('exceeded');
+
+    // Reset content counter
+    document.getElementById('contentCharCount').textContent = '0';
+    document.getElementById('contentCharCount').parentElement.classList.remove('exceeded');
+    document.getElementById('noteContent').classList.remove('exceeded');
+
+    // Reset keyword counter
+    document.getElementById('keywordCount').textContent = '0';
+    document.getElementById('keywordCount').parentElement.classList.remove('exceeded');
+    document.getElementById('noteKeywords').classList.remove('exceeded');
+}
+
+/**************************************/
 /*    SEARCH AND FILTER FUNCTIONS     */
 /**************************************/
 
@@ -668,6 +810,9 @@ async function openNoteDialog(noteId = null) {
 
     editingNoteId = noteId;
 
+    // Reset character counters
+    resetCharacterCounters();
+
     if (noteId) {
         // Populate form with existing note data
         const note = notes.find((n) => n.id === noteId);
@@ -698,6 +843,11 @@ async function openNoteDialog(noteId = null) {
                     titleInput.value = decryptedTitle;
                     contentInput.value = decryptedContent;
                     keywordsInput.value = decryptedKeywords.join(", ");
+
+                    // Trigger input events to update counters
+                    titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    contentInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    keywordsInput.dispatchEvent(new Event('input', { bubbles: true }));
                 } catch (error) {
                     console.error("Error decrypting note for editing:", error);
                     showCustomAlert("Error", "Failed to load note for editing");
@@ -711,6 +861,11 @@ async function openNoteDialog(noteId = null) {
     } else {
         // Reset form for new note
         form.reset();
+
+        // Manually trigger input events to update counters
+        titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+        contentInput.dispatchEvent(new Event('input', { bubbles: true }));
+        keywordsInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     dialog.showModal();
@@ -1399,6 +1554,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     });
+
+    // Set up character counters
+    setupCharacterCounters();
 
     // Handle initial responsive layout
     handleResize();

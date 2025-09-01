@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,8 +14,8 @@
   <meta property="og:title" content="QNT42 - Your Personal Note-Taking Web App" />
   <meta property="og:description"
     content="Organize your thoughts with QNT42, your customizable web app with dynamic themes, note statistics, and powerful management tools." />
-  <meta property="og:image" content="https://ababdelo.github.io/qnt42/assets/images/logo/note-logo-blue.webp" />
-  <meta property="og:url" content="https://ababdelo.github.io/qnt42/" />
+  <meta property="og:image" content="https://ababdelo.github.io/assets/images/logo/note-logo-blue.webp" />
+  <meta property="og:url" content="https://ababdelo.github.io/" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_US" />
   <link rel="icon" type="image/x-icon" href="/qnt42/src/assets/images/logo/favicon-blue.ico" />
@@ -95,8 +96,7 @@
     <aside class="sidebar">
       <h2 class="header-title">
         <div class="title-main-row">
-          <img id="appLogo" src="/qnt42/src/assets/images/logo/note-logo-blue.webp" alt="Quick Notes Logo"
-            class="logo" />
+          <img id="appLogo" src="/qnt42/src/assets/images/logo/note-logo-blue.webp" alt="Quick Notes Logo" class="logo" />
           <span class="main-title">QNT42</span>
         </div>
         <div class="header-subtitle">Your quick note-taking app</div>
@@ -160,15 +160,25 @@
       <form id="noteForm">
         <div class="form-group">
           <label for="noteTitle" class="form-label">Title</label>
-          <input type="text" id="noteTitle" class="form-input" required autocomplete="off"/>
+          <input type="text" id="noteTitle" class="form-input" required autocomplete="off" maxlength="100" />
+          <div class="character-counter">
+            <span id="titleCharCount">0</span>/100 characters
+          </div>
         </div>
         <div class="form-group">
           <label for="noteContent" class="form-label">Content</label>
-          <textarea id="noteContent" class="form-textarea" required autocomplete="off"></textarea>
+          <textarea id="noteContent" class="form-textarea" required autocomplete="off" maxlength="2500"></textarea>
+          <div class="character-counter">
+            <span id="contentCharCount">0</span>/2500 characters
+          </div>
         </div>
         <div class="form-group">
-          <label for="noteKeywords" class="form-label">Keywords (comma separated)</label>
-          <input type="text" id="noteKeywords" class="form-input" placeholder="e.g. work, ideas, personal" autocomplete="off"/>
+          <label for="noteKeywords" class="form-label">Keywords (comma separated, max 5)</label>
+          <input type="text" id="noteKeywords" class="form-input" placeholder="e.g. work, ideas, personal"
+            autocomplete="off" />
+          <div class="character-counter">
+            <span id="keywordCount">0</span>/5 keywords
+          </div>
         </div>
         <div class="dialog-actions">
           <button type="button" class="cancel-btn" onclick="closeNoteDialog()">

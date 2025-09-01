@@ -741,6 +741,23 @@ button i {
     cursor: default;
 }
 
+.character-counter {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--secondary-text-color);
+  margin-top: 0.25rem;
+}
+
+.character-counter.exceeded {
+  color: #ff5252;
+  font-weight: bold;
+}
+
+.form-input.exceeded, .form-textarea.exceeded {
+  border-color: #ff5252;
+  box-shadow: 0 0 0 2px rgba(255, 82, 82, 0.2);
+}
+
 .pin-icon {
     cursor: pointer;
     color: var(--brand-color);
@@ -924,7 +941,7 @@ dialog {
     background: var(--surface-color);
     color: var(--text-color);
     max-width: 500px;
-    width: 90vw;
+    width: 100vw;
 }
 
 dialog::backdrop {
