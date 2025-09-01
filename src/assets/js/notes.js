@@ -2,6 +2,7 @@
 let notes = []; // Array to store all notes
 let editingNoteId = null; // ID of the note currently being edited
 let currentFilter = "all"; // Current filter view: "all", "archived", or "statistics"
+let searchIndex = {}; // Store decrypted searchable content for faster searching
 
 // Color theme configuration for the application
 const COLOR_THEMES = {
@@ -200,9 +201,12 @@ async function saveNote(event) {
                 modifiedAt: now,
                 keywords: encryptedKeywords, // Store encrypted keywords
             };
+
+            // Update search index
+            await updateSearchIndexForNote(notes[noteIndex]);
         } else {
             // Create new note and add to beginning of array
-            notes.unshift({
+            const newNote = {
                 id: generateId(),
                 title: encryptedTitle,
                 content: encryptedContent,
@@ -211,7 +215,11 @@ async function saveNote(event) {
                 keywords: encryptedKeywords, // Store encrypted keywords
                 pinned: false,
                 archived: false,
-            });
+            };
+            notes.unshift(newNote);
+
+            // Add to search index
+            await updateSearchIndexForNote(newNote);
         }
 
         // Clean up and refresh UI
@@ -232,6 +240,10 @@ async function saveNote(event) {
 function deleteNote(noteId) {
     closeExpandedHeader();
     notes = notes.filter((note) => note.id !== noteId);
+
+    // Remove from search index
+    delete searchIndex[noteId];
+
     saveNotes();
     renderNotes();
 }
@@ -251,6 +263,7 @@ function deleteAllNotes() {
         true,
         function () {
             notes = [];
+            searchIndex = {};
             saveNotes();
             renderNotes();
         }
@@ -316,37 +329,37 @@ async function renderNotes(filteredNotes) {
 
         // Render statistics cards
         container.innerHTML = ` 
-            <div class="stats-view active"> 
-                <h2 class="stats-title"> Statistics</h2> 
-                <div class="stats-grid"> 
-                    <div class="stat-card"> 
-                        <i class="ri-file-list-3-line stat-icon"></i> 
-                        <h3>Total Notes</h3> 
-                        <p class="stat-number" data-value="${total}">0</p> 
-                    </div> 
-                    <div class="stat-card"> 
-                        <i class="ri-edit-2-line stat-icon"></i> 
-                        <h3>Active Notes</h3> 
-                        <p class="stat-number" data-value="${active}">0</p> 
-                    </div> 
-                    <div class="stat-card"> 
-                        <i class="ri-archive-line stat-icon"></i> 
-                        <h3>Archived</h3> 
-                        <p class="stat-number" data-value="${archived}">0</p> 
-                    </div> 
-                    <div class="stat-card"> 
-                        <i class="ri-pushpin-line stat-icon"></i> 
-                        <h3>Pinned</h3> 
-                        <p class="stat-number" data-value="${pinned}">0</p> 
-                    </div> 
-                    <div class="stat-card"> 
-                        <i class="ri-price-tag-3-line stat-icon"></i> 
-                        <h3>Unique Keywords</h3> 
-                        <p class="stat-number" data-value="${keywords}">0</p> 
+                <div class="stats-view active"> 
+                    <h2 class="stats-title"> Statistics</h2> 
+                    <div class="stats-grid"> 
+                        <div class="stat-card"> 
+                            <i class="ri-file-list-3-line stat-icon"></i> 
+                            <h3>Total Notes</h3> 
+                            <p class="stat-number" data-value="${total}">0</p> 
+                        </div> 
+                        <div class="stat-card"> 
+                            <i class="ri-edit-2-line stat-icon"></i> 
+                            <h3>Active Notes</h3> 
+                            <p class="stat-number" data-value="${active}">0</p> 
+                        </div> 
+                        <div class="stat-card"> 
+                            <i class="ri-archive-line stat-icon"></i> 
+                            <h3>Archived</h3> 
+                            <p class="stat-number" data-value="${archived}">0</p> 
+                        </div> 
+                        <div class="stat-card"> 
+                            <i class="ri-pushpin-line stat-icon"></i> 
+                            <h3>Pinned</h3> 
+                            <p class="stat-number" data-value="${pinned}">0</p> 
+                        </div> 
+                        <div class="stat-card"> 
+                            <i class="ri-price-tag-3-line stat-icon"></i> 
+                            <h3>Unique Keywords</h3> 
+                            <p class="stat-number" data-value="${keywords}">0</p> 
+                        </div> 
                     </div> 
                 </div> 
-            </div> 
-        `;
+            `;
 
         // Animate statistics numbers with counting effect
         container.querySelectorAll(".stat-number").forEach((el) => {
@@ -381,17 +394,17 @@ async function renderNotes(filteredNotes) {
         container.style.alignItems = "center";
 
         container.innerHTML = ` 
-            <div class="empty-state"> 
-                <img class="no-notes-image" src="/qnt42/src/assets/images/illustrations/no-item.webp" alt="No Notes" /> 
-                <p>${currentFilter === "archived"
+                <div class="empty-state"> 
+                    <img class="no-notes-image" src="/qnt42/src/assets/images/illustrations/no-item.webp" alt="No Notes" /> 
+                    <p>${currentFilter === "archived"
                 ? "<h1>No archived notes found.</h1><br> Create a new note, or archive some existing notes!"
                 : "<h1>No notes found.</h1><br> Create your first note to get started!"
             }</p> 
-                <button class="add-note-btn" onclick="openNoteDialog()"> 
-                    <i class="ri-add-line"></i> Add Your First Note 
-                </button> 
-            </div> 
-        `;
+                    <button class="add-note-btn" onclick="openNoteDialog()"> 
+                        <i class="ri-add-line"></i> Add Your First Note 
+                    </button> 
+                </div> 
+            `;
         return;
     }
 
@@ -505,24 +518,99 @@ async function renderNotes(filteredNotes) {
 /**************************************/
 
 /**
+ * Builds a search index with decrypted content for faster searching
+ */
+async function buildSearchIndex() {
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    if (!userInfo || !userInfo.secretKey) return {};
+
+    const index = {};
+
+    for (const note of notes) {
+        try {
+            // Decrypt title and keywords for searching
+            const decryptedTitle = await decryptData(note.title, userInfo.secretKey);
+
+            // Decrypt each keyword
+            const decryptedKeywords = [];
+            for (const encryptedKeyword of note.keywords) {
+                const decryptedKeyword = await decryptData(
+                    encryptedKeyword,
+                    userInfo.secretKey
+                );
+                decryptedKeywords.push(decryptedKeyword);
+            }
+
+            // Store in index for faster searching
+            index[note.id] = {
+                title: decryptedTitle.toLowerCase(),
+                keywords: decryptedKeywords.join(" ").toLowerCase(),
+            };
+        } catch (error) {
+            console.error("Error building search index:", error);
+        }
+    }
+
+    return index;
+}
+
+/**
+ * Updates the search index for a single note
+ * @param {Object} note - The note to update in the search index
+ */
+async function updateSearchIndexForNote(note) {
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    if (!userInfo || !userInfo.secretKey) return;
+
+    try {
+        // Decrypt title and keywords for searching
+        const decryptedTitle = await decryptData(note.title, userInfo.secretKey);
+
+        // Decrypt each keyword
+        const decryptedKeywords = [];
+        for (const encryptedKeyword of note.keywords) {
+            const decryptedKeyword = await decryptData(
+                encryptedKeyword,
+                userInfo.secretKey
+            );
+            decryptedKeywords.push(decryptedKeyword);
+        }
+
+        // Store in index for faster searching
+        searchIndex[note.id] = {
+            title: decryptedTitle.toLowerCase(),
+            keywords: decryptedKeywords.join(" ").toLowerCase(),
+        };
+    } catch (error) {
+        console.error("Error updating search index:", error);
+    }
+}
+
+/**
  * Filters notes based on search query and current filter
- * Searches through title, content, and keywords
+ * Uses the pre-built search index for faster searching
  * @param {string} query - Search query string
  * @returns {Array} Filtered array of notes
  */
 function filterNotes(query) {
     const lowerQuery = query.toLowerCase().trim();
-    if (currentFilter === "statistics") return notes;
+    if (!lowerQuery) return notes;
 
     return notes.filter((note) => {
         // Filter by archive status first
         if (note.archived && currentFilter === "all") return false;
         if (!note.archived && currentFilter === "archived") return false;
 
-        // Then filter by search query (note: we can't search encrypted content)
-        // In a real implementation, you might want to store unencrypted keywords for search
-        const searchableString = note.keywords.join(" ").toLowerCase();
-        return searchableString.includes(lowerQuery);
+        // Then filter by search query using the search index
+        const index = searchIndex[note.id];
+        if (
+            index &&
+            (index.title.includes(lowerQuery) || index.keywords.includes(lowerQuery))
+        ) {
+            return true;
+        }
+
+        return false;
     });
 }
 
@@ -675,7 +763,7 @@ function importNotes(event) {
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
         try {
             const importedNotes = JSON.parse(e.target.result);
 
@@ -692,7 +780,7 @@ function importNotes(event) {
             let newNotesCount = 0;
 
             // Process each imported note
-            importedNotes.forEach((note) => {
+            for (const note of importedNotes) {
                 // Validate note structure
                 if (
                     note.id &&
@@ -708,9 +796,12 @@ function importNotes(event) {
                     if (!notes.find((n) => n.id === note.id)) {
                         notes.push(note);
                         newNotesCount++;
+
+                        // Add to search index
+                        await updateSearchIndexForNote(note);
                     }
                 }
-            });
+            }
 
             // Show import results
             if (newNotesCount === 0) {
@@ -746,31 +837,50 @@ function importNotes(event) {
 /**************************************/
 
 /**
+ * Updates user info with theme preferences
+ * @param {string} themeType - 'light' or 'dark'
+ * @param {string} colorTheme - Color theme name
+ */
+function updateUserThemePreferences(themeType, colorTheme) {
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    if (userInfo) {
+        userInfo.theme = themeType;
+        userInfo.colorTheme = colorTheme;
+        localStorage.setItem("user-info", JSON.stringify(userInfo));
+    }
+}
+
+/**
  * Toggles between light and dark theme
  */
 function toggleTheme() {
     closeExpandedHeader();
     document.body.classList.toggle("dark-theme");
-    localStorage.setItem(
-        "theme",
-        document.body.classList.contains("dark-theme") ? "dark" : "light"
-    );
+
+    // Save theme preference to user info
+    const themeType = document.body.classList.contains("dark-theme")
+        ? "dark"
+        : "light";
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const colorTheme =
+        userInfo && userInfo.colorTheme ? userInfo.colorTheme : "blue";
+
+    updateUserThemePreferences(themeType, colorTheme);
     updateThemeIcon(); // Update the theme icon after switching
 }
-
 
 /**
  *  Update the theme icon based on current theme
  */
 function updateThemeIcon() {
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
     if (!themeToggleBtn) return;
 
-    const isDarkTheme = document.body.classList.contains('dark-theme');
-    const icon = themeToggleBtn.querySelector('i');
+    const isDarkTheme = document.body.classList.contains("dark-theme");
+    const icon = themeToggleBtn.querySelector("i");
     if (icon) {
         // If dark theme is enabled, show sun icon (switch to light) and vice versa.
-        icon.className = isDarkTheme ? 'ri-sun-line' : 'ri-moon-line';
+        icon.className = isDarkTheme ? "ri-sun-line" : "ri-moon-line";
     }
 }
 
@@ -778,7 +888,9 @@ function updateThemeIcon() {
  * Applies the stored theme preference on page load
  */
 function applyStoredTheme() {
-    const storedTheme = localStorage.getItem("theme");
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const storedTheme = userInfo && userInfo.theme ? userInfo.theme : "light";
+
     if (storedTheme === "dark") {
         document.body.classList.add("dark-theme");
     } else {
@@ -801,7 +913,12 @@ function changeColorTheme(colorName) {
 
     // Apply new color theme
     document.body.classList.add(`${colorName}-theme`);
-    localStorage.setItem("colorTheme", colorName);
+
+    // Save color theme preference to user info
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const themeType = userInfo && userInfo.theme ? userInfo.theme : "light";
+
+    updateUserThemePreferences(themeType, colorName);
     updateFaviconAndLogo(colorName);
 
     // Update color picker UI
@@ -818,12 +935,11 @@ function changeColorTheme(colorName) {
  * Applies the stored color theme preference on page load
  */
 function applyStoredColorTheme() {
-    const storedColorTheme = localStorage.getItem("colorTheme");
-    if (storedColorTheme) {
-        changeColorTheme(storedColorTheme);
-    } else {
-        changeColorTheme("blue"); // Default theme
-    }
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const storedColorTheme =
+        userInfo && userInfo.colorTheme ? userInfo.colorTheme : "blue";
+
+    changeColorTheme(storedColorTheme);
 }
 
 /**
@@ -1093,6 +1209,28 @@ function arrayBufferToBase64(buffer) {
 }
 
 /**************************************/
+/*        DEBOUNCE FUNCTION           */
+/**************************************/
+
+/**
+ * Debounce function to limit how often a function can be called
+ * @param {Function} func - The function to debounce
+ * @param {number} wait - The number of milliseconds to delay
+ * @returns {Function} The debounced function
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+/**************************************/
 /* INITIALIZATION AND EVENT LISTENERS */
 /**************************************/
 
@@ -1100,7 +1238,7 @@ function arrayBufferToBase64(buffer) {
  * Initializes the application when DOM is loaded
  * Sets up event listeners, loads stored data, and applies themes
  */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // Check if user is authenticated
     const userInfo = JSON.parse(localStorage.getItem("user-info"));
     if (!userInfo || !userInfo.uid) {
@@ -1109,7 +1247,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "Please log in to access your notes",
             false,
             () => {
-                window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=login";
+                window.location.href =
+                    "/qnt42/src/pages/auth/authenticate.html?action=login";
             }
         );
         return;
@@ -1117,6 +1256,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load stored notes and render initial view
     notes = loadNotes();
+
+    // Build search index for faster searching
+    searchIndex = await buildSearchIndex();
+
     renderNotes();
 
     // Apply stored user preferences
@@ -1142,15 +1285,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Set up search functionality
-    document.getElementById("searchInput").addEventListener("input", (event) => {
+    // Set up search functionality with debounce
+    const debouncedSearch = debounce(async (event) => {
         const query = event.target.value.trim();
+        const notesContainer = document.getElementById("notesContainer");
+
         if (query === "") {
             renderNotes();
         } else {
-            renderNotes(filterNotes(query));
+            // Show loading indicator
+            notesContainer.innerHTML =
+                '<div class="loading-spinner"><div class="spinner"></div>Searching...</div>';
+
+            // Filter notes based on search query
+            const filteredNotes = filterNotes(query);
+            renderNotes(filteredNotes);
         }
-    });
+    }, 300);
+
+    document
+        .getElementById("searchInput")
+        .addEventListener("input", debouncedSearch);
 
     // Set up header action buttons
     document
