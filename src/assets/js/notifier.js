@@ -4,9 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Helper function to remove toast with fade-out effect
     const removeToast = (toast) => {
         toast.classList.add("hide");
-
         if (toast.timeoutId) clearTimeout(toast.timeoutId);
-
         setTimeout(() => toast.remove(), 500);
     };
 
@@ -15,19 +13,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const decodedMessage = decodeURIComponent(message);
 
         // Split the message into type and description
-        const [msgType, ...descriptionParts] = decodedMessage.split(':');
-        const description = descriptionParts.join(':').trim();
+        const [msgType, ...descriptionParts] = decodedMessage.split(":");
+        const description = descriptionParts.join(":").trim();
 
         const toast = document.createElement("li");
         toast.className = `toast ${type}`;
         toast.innerHTML = `
-            <div class="column">
-                <i class="fa-solid ${iconClass}"></i>
-                <span class="type">${msgType.trim()}</span><span class="colon">:</span> <span class="description">${description}</span>
-            </div>
-            <i class="fa-solid fa-xmark close-btn"></i>
-            <div class="progress-bar"></div>
-        `;
+      <div class="column">
+        <i class="fa-solid ${iconClass}"></i>
+        <span class="type">${msgType.trim()}</span><span class="colon">:</span> <span class="description">${description}</span>
+      </div>
+      <i class="fa-solid fa-xmark close-btn"></i>
+      <div class="progress-bar"></div>
+    `;
 
         notifications.appendChild(toast);
 
@@ -35,7 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
         toast.timeoutId = setTimeout(() => removeToast(toast), 5000);
 
         // Manual remove on close click
-        toast.querySelector('.close-btn').addEventListener('click', () => removeToast(toast));
+        toast
+            .querySelector(".close-btn")
+            .addEventListener("click", () => removeToast(toast));
     };
 
     // Object mapping notification types to corresponding icons
@@ -43,15 +43,21 @@ document.addEventListener("DOMContentLoaded", function () {
         error: "fa-circle-xmark",
         success: "fa-circle-check",
         warning: "fa-triangle-exclamation",
-        info: "fa-circle-info"
+        info: "fa-circle-info",
     };
 
-    // Loop through each notification type and create toast if sessionStorage has it
+    // Expose a global notify function so other modules call it directly
+    window.notify = function (type = "info", message = "") {
+        const icon = messageTypes[type] || messageTypes.info;
+        createToast(type, icon, message);
+    };
+
+    // On page load: show any flash messages stored in sessionStorage (keeps your server/redirect flash path working)
     Object.keys(messageTypes).forEach((type) => {
         const message = sessionStorage.getItem(type);
         if (message) {
             createToast(type, messageTypes[type], message);
-            sessionStorage.removeItem(type); // Clear after showing (like flash messages)
+            sessionStorage.removeItem(type); // clear after showing
         }
     });
 });

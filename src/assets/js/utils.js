@@ -30,21 +30,13 @@ export function sanitizeInput(data) {
  * Validate the email format.
  *
  * @param {string} email The email address to validate.
- * @param {string} action The action to take if validation fails ("redirect" or "reload").
- * @param {string} path The path to redirect if action = "redirect".
- * @return {boolean} True if valid, false otherwise.
+ * @returns {boolean} True if valid, false otherwise.
  */
-export function validateEmail(email, action = "reload", path) {
+export function validateEmail(email) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-        sessionStorage.setItem("warning", "Warning: Invalid email format");
-
-        if (action === "reload") {
-            window.location.reload();
-        } else {
-            window.location.href = path;
-        }
-
+        // Show toast and DO NOT reload / redirect
+        window.notify("warning", "Warning: Invalid email format");
         return false;
     }
     return true;
@@ -57,12 +49,8 @@ export function validateEmail(email, action = "reload", path) {
  */
 export function validateTerms() {
     const termsCheckbox = document.getElementById("terms");
-    if (!termsCheckbox.checked) {
-        sessionStorage.setItem(
-            "warning",
-            "Warning: You must agree to the Terms of Use and Privacy Policy."
-        );
-        window.location.reload();
+    if (!termsCheckbox || !termsCheckbox.checked) {
+        window.notify("warning", "Warning: You must agree to the Terms of Use and Privacy Policy.");
         return false;
     }
     return true;
@@ -73,20 +61,11 @@ export function validateTerms() {
  *
  * @param {string} field The field name.
  * @param {string} value The value to check.
- * @param {string} action The action to take if validation fails ("redirect" or "reload").
- * @param {string} path The path to redirect if action = "redirect".
  * @return {boolean} True if valid, false otherwise.
  */
-export function checkEmptyField(field, value, action = "reload", path) {
+export function checkEmptyField(field, value) {
     if (!value || value.trim() === "") {
-        sessionStorage.setItem("warning", `Warning: ${field} is required`);
-
-        if (action === "reload") {
-            window.location.reload();
-        } else {
-            window.location.href = path;
-        }
-
+        window.notify("warning", `Warning: ${field} is required`);
         return false;
     }
     return true;
@@ -109,43 +88,23 @@ export function validatePassword(password) {
     const hasSpecialChar = /[!@#$%^&*]/.test(password);
 
     if (password.length < minLength) {
-        sessionStorage.setItem(
-            "warning",
-            `Warning: Password must be at least ${minLength} characters long.`
-        );
-        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
+        window.notify("warning", `Warning: Password must be at least ${minLength} characters long.`);
         return false;
     }
     if (!hasUppercase) {
-        sessionStorage.setItem(
-            "warning",
-            "Warning: Password must include at least one uppercase letter."
-        );
-        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
+        window.notify("warning", "Warning: Password must include at least one uppercase letter.");
         return false;
     }
     if (!hasLowercase) {
-        sessionStorage.setItem(
-            "warning",
-            "Warning: Password must include at least one lowercase letter."
-        );
-        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
+        window.notify("warning", "Warning: Password must include at least one lowercase letter.");
         return false;
     }
     if (!hasNumber) {
-        sessionStorage.setItem(
-            "warning",
-            "Warning: Password must include at least one number."
-        );
-        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
+        window.notify("warning", "Warning: Password must include at least one number.");
         return false;
     }
     if (!hasSpecialChar) {
-        sessionStorage.setItem(
-            "warning",
-            "Warning: Password must include at least one special character."
-        );
-        window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=register";
+        window.notify("warning", "Warning: Password must include at least one special character.");
         return false;
     }
 
