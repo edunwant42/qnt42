@@ -2,6 +2,7 @@
 import {
   auth,
   signInWithEmailAndPassword,
+  signOut,
   ref,
   get,
   dbRef,
@@ -70,13 +71,17 @@ loginButton.addEventListener("click", async (event) => {
     const data = snapshot.val();
 
     if (!data.verified) {
-      sessionStorage.setItem("Info", "Info: Your account is not verified. Check your email for the verification OTP.");
-
+      sessionStorage.setItem("info", "Info: Your account is not verified. Check your email for the verification OTP.");
+      
       // Reset button state
       loginButton.disabled = originalDisabled;
       loginButton.innerHTML = originalText;
 
+      // Sign out the user immediately then redirect him to the verification page
+      await auth.signOut();
+
       window.location.href = "/qnt42/src/pages/auth/secure.html?action=verify&uid=" + userCredential.user.uid;
+      
       return;
     }
 
