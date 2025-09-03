@@ -22,34 +22,28 @@
 ## 📑 Table of Contents
 - [📑 Table of Contents](#-table-of-contents)
 - [🚀 Overview](#-overview)
-- [📸 Preview](#-preview)
-  - [🖥️ Desktop View](#️-desktop-view)
-  - [📱 Mobile View](#-mobile-view)
-  - [📱 Tablet View](#-tablet-view)
-- [✨ Key Features](#-key-features)
-  - [🔐 **Security \& Privacy**](#-security--privacy)
-  - [📝 **Note Management**](#-note-management)
-  - [🎨 **User Experience**](#-user-experience)
-  - [🔧 **Advanced Features**](#-advanced-features)
-- [🛠️ Technology Stack](#️-technology-stack)
-  - [**Frontend**](#frontend)
-  - [**Backend \& Services**](#backend--services)
-- [📁 Project Structure](#-project-structure)
-- [🎯 Usage](#-usage)
-- [🔒 Security Implementation](#-security-implementation)
 - [🌐 Demonstration](#-demonstration)
+- [📸 Preview](#-preview)
+- [✨ Key Features](#-key-features)
+- [🎯 Usage](#-usage)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [🌟 Future Enhancements](#-future-enhancements)
+- [📁 Project Structure](#-project-structure)
 - [🤝 Contributing](#-contributing)
-  - [🚀 How to Contribute:](#-how-to-contribute)
-  - [🐛 Found a Bug?](#-found-a-bug)
 - [📄 License](#-license)
 - [👨‍💻 Author](#-author)
-- [🌟 Future Enhancements](#-future-enhancements)
 
 ---
 
 ## 🚀 Overview
 
 **QNT42** (Quick Notes Taking) is a lightweight, secure, and efficient note-taking web application designed for fast and easy note management. With a clean and intuitive interface, it lets you write, store, and manage notes securely with complete privacy - your data is encrypted and accessible only to you.
+
+---
+
+## 🌐 Demonstration
+
+This is the live demo of [QNT42](https://edunwant42.github.io/qnt42/)
 
 ---
 
@@ -77,51 +71,70 @@
 
 ---
 
-## ✨ Key Features
+## ✨ Features
 
-### 🔐 **Security & Privacy**
-- **End-to-end encryption** for all notes and metadata
-- **Client-side encryption** before data storage
-- Secure authentication with email verification
-- Password reset and account recovery systems
+- **🚀 No Installation Required**: Use directly in any modern browser.
+- **🔐 Authentication**: Create and log in to your account with verification. *(Password reset is under development.)*
+- **📝 Create, Edit & Delete Notes**: Manage your notes with a simple interface.
+- **🔍 Real-Time Search**: Instantly filter notes as you type.
+- **📌 Organizational Tools**: Organize notes by pinning important ones or archiving completed tasks.
+- **🎨 Color Themes**: Customize your theme preferences from multiple available colors (Blue, Green, Orange, Pink, Purple, Yellow).
+- **🌙 Dark/Light Mode**: Toggle between light and dark for comfortable viewing.
+- **🔔 Notification System**: User feedback for all actions
+- **📱 Mobile-First Navigation**: Smooth expandable header navigation on mobile.
+- **💻 Fully Responsive Design**: Works seamlessly on desktops, tablets, and mobiles.
+- **📊 Statistics Pannel**: Track note counts and productivity metrics.
+- **⏱️ Automatic Logout**: Logs out after **42 minutes** of inactivity.
+- **🌐 Cross-Browser Compatibility**: Works on Chrome, Firefox, Safari, Edge, and more.
+- **🛡️ Client-Side Encryption**: Notes are encrypted before storage, ensuring complete privacy.
+- **💾 Data Portability**: Create Backups for your data, exporting and importing it whenever needded.
+- **🔄 Cloud Synchronization**: Access notes from multiple devices. *(Under development.)*
 
-### 📝 **Note Management**
-- Create, edit, and organize notes with titles and content
-- Keyword tagging system for easy organization
-- Advanced search functionality
-- Note pinning and archiving capabilities
-- Import/export functionality with JSON support
+---
 
-### 🎨 **User Experience**
-- Responsive design optimized for all devices
-- Multiple color themes with light/dark mode support
-- Intuitive drag-and-drop interface
-- Customizable note cards and layouts
-- Smooth animations and transitions
+## 🎯 Usage
 
-### 🔧 **Advanced Features**
-- Real-time note synchronization
-- Note statistics and insights
-- Data portability with backup options
-- Cross-device compatibility
-- OTP-based account verification
+1. Sign up for an account, verify it, and log in.
+2. 📝 Click **`Add Note`** to create a new note.  
+3. ✏️ Edit or delete notes using the action buttons.  
+4. 🔍 Use the search bar to filter notes by keywords.  
+5. 📌 Pin or archive notes for better organization.  
+6. 🌙 Toggle light/dark themes from the sidebar or header.  
+7. 🎨 Apply different color themes.  
+8. 📊 Track your stats in the dashboard.  
+9. 📤 Export or import notes as JSON files.  
+10. 📱 On mobile, use the expandable menu for all features.  
+
+> **Note:** Currently, notes are saved locally in your browser. They persist across sessions on the same device but do not sync across devices. Clearing browser data will delete your notes.
 
 ---
 
 ## 🛠️ Technology Stack
 
-### **Frontend**
-- **HTML5** - Semantic markup and structure
-- **CSS3** - Modern styling with Flexbox, Grid, and CSS Variables
-- **Vanilla JavaScript (ES6+)** - Clean, dependency-free functionality
-- **Font Awesome 6.4.0** - Professional icon library
-- **Lucide Icons** - Modern icon set
+### Frontend
+- **HTML5**, Semantic markup and structure
+- **CSS3**, Modern styling with Flexbox, Grid, and CSS Variables
+- **Vanilla JavaScript (ES6+)**, Lightweight, dependency-free implementation
 
-### **Backend & Services**
-- **Firebase Authentication** - Secure user management
-- **Firebase Realtime Database** - Real-time data synchronization
-- **EmailJS** - Transactional email service for notifications
-- **Web Crypto API** - Client-side encryption implementation
+### Backend Services
+- **Firebase Authentication**, Secure user management
+- **Firebase Realtime Database**, Cloud storage and synchronization
+- **EmailJS**, Transactional email services
+- **Web Crypto API**, Client-side encryption implementation
+
+---
+
+## 🌟 Future Enhancements
+
+While QNT42 is currently a frontend-only application, future plans include:
+
+- [ ] Custom backend implementation for enhanced functionality
+- [ ] Multi-device synchronization capabilities
+- [ ] Advanced collaboration features
+- [ ] Mobile application development
+- [ ] Advanced organizational features (folders, tags)
+- [ ] Rich text editing support
+- [ ] Note sharing with permission controls
 
 ---
 
@@ -172,35 +185,6 @@
             └── verify.js # Account verification service
 ```
 
-
----
-
-## 🎯 Usage
-
-QNT42 is designed for personal and educational use:
-
-1. **Account Creation**: Register with email and secure password
-2. **Email Verification**: Verify your account with OTP sent to your email
-3. **Note Creation**: Start creating encrypted notes with titles and keywords
-4. **Organization**: Use keywords to categorize and search your notes
-5. **Data Management**: Export your notes for backup or import existing notes
-
----
-
-## 🔒 Security Implementation
-
-- All note content is encrypted using AES-GCM encryption before storage
-- Encryption keys are generated per user and never leave the client
-- Firebase authentication secures user accounts
-- Session management with automatic logout after inactivity
-- No plaintext note data is stored on any server
-
----
-
-## 🌐 Demonstration
-
-This is the live demo of [QNT42](https://edunwant42.github.io/qnt42/)
-
 ---
 
 ## 🤝 Contributing
@@ -235,20 +219,6 @@ This project is licensed under a **Personal & Educational Use License**, see the
 **Abderrahmane Abdelouafi**
 - Portfolio: [https://ed42.tech](https://ed42.tech)
 - Main GitHub Account: [@ababddelo](https://github.com/ababddelo)
-
----
-
-## 🌟 Future Enhancements
-
-While QNT42 is currently a frontend-only application, future plans include:
-
-- Custom backend implementation for enhanced control
-- Advanced collaboration features
-- Mobile application development
-- Browser extension for quick note capture
-- Advanced note organization with folders and tags
-- Rich text editing capabilities
-- Note sharing with permission controls
 
 ---
 
