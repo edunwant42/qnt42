@@ -24,12 +24,19 @@
 - [🚀 Overview](#-overview)
 - [🌐 Demonstration](#-demonstration)
 - [📸 Preview](#-preview)
-- [✨ Key Features](#-key-features)
+  - [🖥️ Desktop View](#️-desktop-view)
+  - [📱 Mobile View](#-mobile-view)
+  - [📱 Tablet View](#-tablet-view)
+- [✨ Features](#-features)
 - [🎯 Usage](#-usage)
 - [🛠️ Technology Stack](#️-technology-stack)
+  - [Frontend](#frontend)
+  - [Backend Services](#backend-services)
 - [🌟 Future Enhancements](#-future-enhancements)
 - [📁 Project Structure](#-project-structure)
 - [🤝 Contributing](#-contributing)
+  - [🚀 How to Contribute:](#-how-to-contribute)
+  - [🐛 Found a Bug?](#-found-a-bug)
 - [📄 License](#-license)
 - [👨‍💻 Author](#-author)
 
@@ -74,7 +81,7 @@ This is the live demo of [QNT42](https://edunwant42.github.io/qnt42/)
 ## ✨ Features
 
 - **🚀 No Installation Required**: Use directly in any modern browser.
-- **🔐 Authentication**: Create and log in to your account with verification. *(Password reset is under development.)*
+- **🔐 Authentication**: Full and seamless authentication support, including account creation, verification, login, and password reset.
 - **📝 Create, Edit & Delete Notes**: Manage your notes with a simple interface.
 - **🔍 Real-Time Search**: Instantly filter notes as you type.
 - **📌 Organizational Tools**: Organize notes by pinning important ones or archiving completed tasks.
