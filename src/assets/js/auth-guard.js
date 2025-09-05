@@ -127,7 +127,6 @@ function initAuthGuard() {
                                 localStorage.setItem(
                                     "user-info",
                                     JSON.stringify({
-                                        uid: user.uid,
                                         username: data.username || "!F",
                                         secretKey: data.secretKey || "!F",
                                     })

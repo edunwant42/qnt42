@@ -6,7 +6,7 @@ import {
   ref,
   get,
   dbRef,
-  child,
+  child
 } from "/qnt42/src/assets/js/config.js";
 
 // Import utility functions
@@ -14,111 +14,100 @@ import {
   sanitizeInput,
   checkEmptyField,
   validateEmail,
-  decryptSecretKey,
 } from "/qnt42/src/assets/js/utils.js";
 
 // Get login button
 const loginButton = document.getElementById("login-btn");
 
-// Redirect URL constants
-const LOGIN_PAGE = "/qnt42/src/pages/auth/authenticate.html?action=login";
-const VERIFY_PAGE = "/qnt42/src/pages/auth/secure.html?action=verify&uid=";
-const DASHBOARD_PAGE = "/qnt42/src/pages/dashboard.html";
-
 // Add click event listener
 loginButton.addEventListener("click", async (event) => {
   event.preventDefault();
 
+  // Store original button content
   const originalText = loginButton.innerHTML;
   const originalDisabled = loginButton.disabled;
 
   // Show loading state
   loginButton.disabled = true;
-  loginButton.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Signing in ...';
+  loginButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Signing in ...';
 
   // Capture and sanitize input values
   const email = sanitizeInput(document.getElementById("sign-in_email").value);
-  const password = sanitizeInput(
-    document.getElementById("sign-in_password").value
-  );
+  const password = sanitizeInput(document.getElementById("sign-in_password").value);
+
+  let redirectTo = "/qnt42/src/pages/auth/authenticate.html?action=login";
 
   // Run validations
   if (
-    !checkEmptyField("Email", email, "redirect", LOGIN_PAGE) ||
-    !checkEmptyField("Password", password, "redirect", LOGIN_PAGE) ||
-    !validateEmail(email, "redirect", LOGIN_PAGE)
+    !checkEmptyField("Email", email, "redirect", redirectTo) ||
+    !checkEmptyField("Password", password, "redirect", redirectTo) ||
+    !validateEmail(email, "redirect", redirectTo)
   ) {
+    // Reset button state if validation fails
+    loginButton.disabled = originalDisabled;
+    loginButton.innerHTML = originalText;
     return;
   }
 
+  // Attempt login
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
     // Fetch user data from RTDB
-    const snapshot = await get(
-      child(dbRef, "users/" + userCredential.user.uid)
-    );
+    const snapshot = await get(child(dbRef, "users/" + userCredential.user.uid));
 
     if (!snapshot.exists()) {
       sessionStorage.setItem("error", "Error: User data not found.");
-      return (window.location.href = LOGIN_PAGE);
+
+      // Reset button state
+      loginButton.disabled = originalDisabled;
+      loginButton.innerHTML = originalText;
+
+      window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=login";
+      return;
     }
 
     const data = snapshot.val();
 
     if (!data.verified) {
-      sessionStorage.setItem(
-        "info",
-        "Info: Your account is not verified. Check your email for the verification OTP."
-      );
-      await signOut(auth);
-      return (window.location.href = VERIFY_PAGE + userCredential.user.uid);
+      sessionStorage.setItem("info", "Info: Your account is not verified. Check your email for the verification OTP.");
+      
+      // Reset button state
+      loginButton.disabled = originalDisabled;
+      loginButton.innerHTML = originalText;
+
+      // Sign out the user immediately then redirect him to the verification page
+      await auth.signOut();
+
+      window.location.href = "/qnt42/src/pages/auth/secure.html?action=verify&uid=" + userCredential.user.uid;
+      
+      return;
     }
 
     const username = data.username || "";
-    const encryptedSecretKey = data.secretKey || "";
+    const secretKey = data.secretKey || "";
 
-    if (!encryptedSecretKey) {
-      sessionStorage.setItem(
-        "error",
-        "Error: Missing secret key. Contact support."
-      );
-      return (window.location.href = LOGIN_PAGE);
-    }
-
-    // Decrypt secret key
-    const secretKey = await decryptSecretKey(
-      encryptedSecretKey,
-      password,
-      userCredential.user.uid
-    );
-
-    // Persist safe info in localStorage
-    localStorage.setItem(
-      "user-info",
-      JSON.stringify({
-        uid: userCredential.user.uid,
-        username,
-        secretKey,
-      })
-    );
+    // Persist safe info in localStorage (so it survives reloads)
+    localStorage.setItem("user-info", JSON.stringify({
+      uid: userCredential.user.uid,
+      username,
+      secretKey
+    }));
 
     // Redirect to dashboard
-    window.location.href = DASHBOARD_PAGE;
-  } catch (error) {
-    let userMessage = "Error: Login failed.";
+    window.location.href = "/qnt42/src/pages/dashboard.html";
+  }
+  catch (error) {
+    let userMessage = "Error: Login failed. ";
+    let notifType = "error";
+
     switch (error.code) {
       case "auth/user-not-found":
         userMessage = "Error: No account found with this email.";
         break;
       case "auth/too-many-requests":
-        userMessage =
-          "Error: Too many failed attempts. Please try again later.";
+        userMessage = "Error: Too many failed attempts. Please try again later.";
         break;
       case "auth/invalid-credential":
         userMessage = "Error: Invalid email or password. Please try again.";
@@ -126,11 +115,19 @@ loginButton.addEventListener("click", async (event) => {
       case "auth/network-request-failed":
         userMessage = "Error: Network error. Please check your connection.";
         break;
+      default:
+        userMessage = "Error: Unknown error occurred. Please try again later.";
     }
-    sessionStorage.setItem("error", userMessage);
-    window.location.href = LOGIN_PAGE;
+
+    sessionStorage.setItem(notifType, userMessage);
+
+    // Reset button state
+    loginButton.disabled = originalDisabled;
+    loginButton.innerHTML = originalText;
+
+    window.location.href = "/qnt42/src/pages/auth/authenticate.html?action=login";
   } finally {
-    // Ensure button is reset
+    // Ensure button is reset even if there's an unhandled exception
     loginButton.disabled = originalDisabled;
     loginButton.innerHTML = originalText;
   }
