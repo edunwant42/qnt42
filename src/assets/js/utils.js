@@ -72,6 +72,21 @@ export function checkEmptyField(field, value) {
 }
 
 /**
+ * Match and compare passwords fields for equality.
+ *
+ * @param {string} password The password value.
+ * @param {string} confirmPassword The confirm password value.
+ * @return {boolean} True if they match, false otherwise.
+ */
+export function matchPasswords(password, confirmPassword) {
+    if (password !== confirmPassword) {
+        window.notify("warning", "Warning: Passwords do not match");
+        return false;
+    }
+    return true;
+}
+
+/**
  * Validate the security of a password.
  *
  * Checks for minimum length, uppercase, lowercase, numeric,
