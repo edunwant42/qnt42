@@ -13,6 +13,7 @@ import {
   validateTerms,
   validatePassword,
   generateSecretKey,
+  encryptSecretKey,
   generateOTP,
 } from "/qnt42/src/assets/js/utils.js";
 
@@ -62,14 +63,14 @@ registerButton.addEventListener("click", async (event) => {
       );
 
       const uid = userCredential.user.uid;
-      const secretKey = generateSecretKey();
+      const encryptedSecretKey = await encryptSecretKey(generateSecretKey(), password, uid);
       const otp = generateOTP();
       const otpCreatedAt = Date.now();
 
       await set(ref(db, `users/${uid}`), {
         username,
         email,
-        secretKey,
+        secretKey: encryptedSecretKey,
         otp,
         otpCreatedAt,
         verified: false,
