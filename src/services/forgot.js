@@ -1,4 +1,9 @@
-import { sanitizeInput, checkEmptyField, validateEmail } from "/qnt42/src/assets/js/utils.js";
+import {
+    sanitizeInput,
+    checkEmptyField,
+    validateEmail,
+} from "/qnt42/src/assets/js/utils.js";
+import { auth, sendPasswordResetEmail } from "/qnt42/src/assets/js/config.js"; // use from your config.js
 
 // Initialize forgot password page
 function initForgotPasswordPage() {
@@ -8,37 +13,41 @@ function initForgotPasswordPage() {
     forgotForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // Store original button content
-        const originalText = forgotButton.innerHTML;
-        const originalDisabled = forgotButton.disabled;
-
-        // Show loading state
-        forgotButton.disabled = true;
-        forgotButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Processing ...';
-
         const email = sanitizeInput(document.getElementById("forgot-email").value);
 
-        if (!checkEmptyField("Email", email) || !validateEmail(email)) {
-            // Reset button state
-            forgotButton.disabled = originalDisabled;
-            forgotButton.innerHTML = originalText;
-            return;
-        }
+        // Validation
+        if (!checkEmptyField("Email", email) || !validateEmail(email)) return;
 
-        // Simulate processing time
-        setTimeout(() => {
-            // Show info message specific to password reset
+        // Store original button content
+        const originalText = forgotButton.innerHTML;
+        forgotButton.disabled = true;
+        forgotButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin-pulse"></i> Sending...';
+
+        try {
+            // Firebase built-in reset email sender
+            await sendPasswordResetEmail(auth, email, {
+                url: "https://edunwant42.github.io/qnt42/src/pages/auth/secure.html?action=reset",
+                handleCodeInApp: true,
+            });
+
             sessionStorage.setItem(
-                "info",
-                "Notice: Password recovery is currently in development. For now, please try to contact our support if you need assistance."
+                "success",
+                "Success: A password reset email has been sent If your provided email is valid. Please check your inbox (and spam folder)."
             );
-            
-            // Reset button state
-            forgotButton.disabled = originalDisabled;
-            forgotButton.innerHTML = originalText;
-            
             window.location.reload();
-        }, 1500);
+        } catch (error) {
+            console.error(error);
+            sessionStorage.setItem(
+                "error",
+                "Error: Could not send reset email: " + error.message
+            );
+            window.location.reload();
+        } finally {
+            // Restore button state
+            forgotButton.disabled = false;
+            forgotButton.innerHTML = originalText;
+        }
     });
 }
 
